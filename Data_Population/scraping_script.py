@@ -14,7 +14,7 @@ def export_csv(data_dicts):
                 dict_writer.writerow(                                                        \
                                         {                                                    \
                                                 'name' : data_dict['name'],                  \
-                                                'address' : data_dict['full_address'],       \
+                                                'address' : data_dict['full_address'].replace('\n', ' '),\
                                                 'stars' : float(data_dict['stars']),         \
                                                 'longitude' : float(data_dict['longitude']), \
                                                 'latitude' : float(data_dict['latitude'])    \
