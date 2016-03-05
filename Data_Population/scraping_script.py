@@ -25,11 +25,13 @@ def export_restaurant_csv(data_dicts):
                 print data_dict
 
 def export_person_csv(data_dicts):
-    with open("csv/person.csv", "wb+") as target_csv:
+    with open("csv/person_1000.csv", "wb+") as target_csv:
         dict_writer = csv.DictWriter(target_csv, fieldnames=['person_id', 'name', 'email', 'gender', 'age'])
         dict_writer.writeheader()
         for idx, data_dict in enumerate(data_dicts):
-            if idx == 100:
+            if idx <= 100:
+                continue
+            if idx == 2000:
                 return
             try:
                 dict_writer.writerow(                                                        \
@@ -44,6 +46,7 @@ def export_person_csv(data_dicts):
             except UnicodeEncodeError:
                 print data_dict
 
+# INSERT INTO Region (Region_id, Zip_code, NW_point, SE_point) VALUES (1, 10027, point(40.817419,73.973054), point(40.802380,73.943056));
 
 if __name__ == "__main__":
     # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
