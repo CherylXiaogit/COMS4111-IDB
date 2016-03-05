@@ -32,7 +32,7 @@ def export_person_csv(data_dicts):
             try:
                 dict_writer.writerow(                                                        \
                                         {                                                    \
-                                                'person_id' : idx + 1,            \
+                                                'person_id' : idx + 4,            \
                                                 'name' : data_dict['name'],                  \
                                                 'email' : data_dict['name'][:2].lower() + "@columbia.edu",\
                                                 'gender' : random.choice(['male', 'female']),         \
@@ -44,5 +44,5 @@ def export_person_csv(data_dicts):
 
 
 if __name__ == "__main__":
-    export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
     export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
