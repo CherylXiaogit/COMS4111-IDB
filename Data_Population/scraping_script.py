@@ -7,15 +7,16 @@ def yelp_json_dict_transformer(json_file_path):
 
 def export_restaurant_csv(data_dicts):
     with open("csv/restaurant.csv", "wb+") as target_csv:
-        dict_writer = csv.DictWriter(target_csv, fieldnames=['name', 'address', 'stars', 'longitude', 'latitude'])
+        dict_writer = csv.DictWriter(target_csv, fieldnames=['restaurant_id', 'name', 'address', 'url', 'longitude', 'latitude'])
         dict_writer.writeheader()
         for data_dict in data_dicts:
             try:
                 dict_writer.writerow(                                                        \
                                         {                                                    \
+                                                'restaurant_id' : data_dict['business_id'],   \
                                                 'name' : data_dict['name'],                  \
                                                 'address' : data_dict['full_address'].replace('\n', ' '),\
-                                                'stars' : float(data_dict['stars']),         \
+                                                'url' : '',         \
                                                 'longitude' : float(data_dict['longitude']), \
                                                 'latitude' : float(data_dict['latitude'])    \
                                         }                                                    \
@@ -25,12 +26,13 @@ def export_restaurant_csv(data_dicts):
 
 def export_person_csv(data_dicts):
     with open("csv/person.csv", "wb+") as target_csv:
-        dict_writer = csv.DictWriter(target_csv, fieldnames=['name', 'email', 'gender', 'age'])
+        dict_writer = csv.DictWriter(target_csv, fieldnames=['person_id', 'name', 'email', 'gender', 'age'])
         dict_writer.writeheader()
         for data_dict in data_dicts:
             try:
                 dict_writer.writerow(                                                        \
                                         {                                                    \
+                                                'person_id' : data_dict['user_id'],            \
                                                 'name' : data_dict['name'],                  \
                                                 'email' : data_dict['name'].lower() + "@gmail.com",\
                                                 'gender' : random.choice(['Male', 'Female', 'None']),         \
