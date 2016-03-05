@@ -34,7 +34,7 @@ def export_person_csv(data_dicts):
                                         {                                                    \
                                                 'person_id' : idx + 1,            \
                                                 'name' : data_dict['name'],                  \
-                                                'email' : data_dict['name'].lower() + "@gmail.com",\
+                                                'email' : data_dict['name'][:2].lower() + "@columbia.edu",\
                                                 'gender' : random.choice(['male', 'female']),         \
                                                 'age' : random.randint(10, 50) \
                                         }                                                    \
