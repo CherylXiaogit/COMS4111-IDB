@@ -51,16 +51,16 @@ def export_restaurant_sql(data_dicts):
         for idx, data_dict in enumerate(data_dicts):
             try:
                 restaurant_id = str(idx + 1)
-                name = data_dict['name']
+                name = data_dict['name'].replace("'", '')
                 if not(name[0] == '"' and name[-1] == '"'):
-                    name = '"' + name + '"'
-                address = data_dict['full_address'].replace('\n', ' ')
+                    name = "'" + name + "'"
+                address = data_dict['full_address'].replace('\n', ' ').replace("'", '')
                 if not(address[0] == '"' and address[-1] == '"'):
-                    address = '"' + address + '"'
+                    address = "'" + address + "'"
                 url = "'yelp.com'"
                 location = 'point(' + str(float(data_dict['longitude'])) + ', ' + str(float(data_dict['latitude'])) + ')'
                 value_str = ", ".join([restaurant_id, name, address, url, location])
-                rest_sql_str = "INSERT INTO Restaurant (Restaurant_id, Name, Addr, Location) VALUES (" + value_str + ");\n"
+                rest_sql_str = "INSERT INTO Restaurant (Restaurant_id, Name, Addr, Url, Location) VALUES (" + value_str + ");\n"
                 target_sql.write(rest_sql_str)
             except UnicodeEncodeError:
                 print data_dict
