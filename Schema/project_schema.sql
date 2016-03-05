@@ -1,3 +1,17 @@
+DROP TABLE Person CASCADE;
+DROP TABLE Event CASCADE;
+DROP TABLE Restaurant CASCADE;
+DROP TABLE Feature CASCADE;
+DROP TABLE Review CASCADE;
+DROP TABLE Region CASCADE;
+DROP TABLE PJoinE CASCADE;
+DROP TABLE Own CASCADE;
+DROP TABLE Write CASCADE;
+DROP TABLE Get CASCADE;
+DROP TABLE Belong_to CASCADE;
+DROP TABLE Recommend CASCADE;
+DROP TABLE Special_for CASCADE;
+
 CREATE TABLE Person 
 (
     Person_id SERIAL,
@@ -11,9 +25,11 @@ CREATE TABLE Person
 );
 
 /* Good */
+/*
 INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Sean Malto', 'sm@columbia.edu', 'male', 24);
 INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Chaz Ortiz', 'co@columbia.edu', 'male', 22);
 INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Daisy Zhang', 'dz@columbia.edu', 'female', 23);
+*/
 
 /* Bad */
 /*
@@ -32,18 +48,23 @@ CREATE TABLE Event
     PRIMARY KEY(Event_id)
 );
 
+/*
 INSERT INTO Event (Name, Description, EDate, ETime) VALUES ('Farewell for John', 'John is sooooo cool, everyone loves John. Wish you all the best back to Taiwan', '3/5/2016', '17:00');
+*/
 
 CREATE TABLE Restaurant 
 (
     Restaurant_id bigint, /* The id according to the data source */
-    Name CHAR(20) NOT NULL,
-    Addr CHAR(20) NOT NULL,
+    Name text NOT NULL,
+    Addr text NOT NULL,
     Url CHAR(20),
+    Location POINT NOT NULL,
     PRIMARY KEY(Restaurant_id)
 );
 
+/*
 INSERT INTO Restaurant (Restaurant_id, Name, Addr) VALUES (1213123, 'Jin Ramen', '555 W 125 St');
+*/
 
 CREATE TABLE Feature
 (
@@ -52,8 +73,10 @@ CREATE TABLE Feature
     PRIMARY KEY(Feature_id)
 );
 
+/*
 INSERT INTO Feature (Name) VALUES ('cheap');
 INSERT INTO Feature (Name) VALUES ('wine');
+*/
 
 CREATE TABLE Review
 (
@@ -70,7 +93,9 @@ CREATE TABLE Review
     CONSTRAINT valid_rate CHECK (Rate > 0 AND Rate < 6)
 );
 
+/*
 INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (1213123, 1, 'vely gooda', '3/11/2016', 5);
+*/
 
 CREATE TABLE Region
 (
@@ -81,7 +106,9 @@ CREATE TABLE Region
     PRIMARY KEY(Region_id)
 );
 
+/*
 INSERT INTO Region (Region_id, Zip_code, NW_point, SE_point) VALUES (1, 10027, point(40.817419,73.973054), point(40.802380,73.943056));
+*/
 
 CREATE TABLE PJoinE
 (
@@ -93,9 +120,11 @@ CREATE TABLE PJoinE
     FOREIGN KEY (Event_id) REFERENCES Event
 );
 
-INSERT INTO PJoinE (Event_id, Person_id) VALUES (2, 1);
-INSERT INTO PJoinE (Event_id, Person_id) VALUES (2, 2);
-INSERT INTO PJoinE (Event_id, Person_id) VALUES (2, 3);
+/*
+INSERT INTO PJoinE (Event_id, Person_id) VALUES (1, 1);
+INSERT INTO PJoinE (Event_id, Person_id) VALUES (1, 2);
+INSERT INTO PJoinE (Event_id, Person_id) VALUES (1, 3);
+*/
 
 CREATE TABLE Own
 (
@@ -107,7 +136,9 @@ CREATE TABLE Own
     FOREIGN KEY (Event_id) REFERENCES Event
 );
 
-INSERT INTO Own (Event_id, Person_id) VALUES (2, 1);
+/*
+INSERT INTO Own (Event_id, Person_id) VALUES (1, 1);
+*/
 
 /* Redundant? */
 CREATE TABLE Write
@@ -141,7 +172,9 @@ CREATE TABLE Belong_to
     FOREIGN KEY (Region_id) REFERENCES Region ON DELETE CASCADE
 );
 
+/*
 INSERT INTO Belong_to (Restaurant_id, Region_id) VALUES (1213123, 1);
+*/
 
 /* Commercial Purpose */
 CREATE TABLE Recommend
