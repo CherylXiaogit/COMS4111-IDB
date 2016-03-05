@@ -29,6 +29,8 @@ def export_person_csv(data_dicts):
         dict_writer = csv.DictWriter(target_csv, fieldnames=['person_id', 'name', 'email', 'gender', 'age'])
         dict_writer.writeheader()
         for idx, data_dict in enumerate(data_dicts):
+            if idx == 100:
+                return
             try:
                 dict_writer.writerow(                                                        \
                                         {                                                    \
