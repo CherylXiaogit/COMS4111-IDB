@@ -29,14 +29,12 @@ def export_person_csv(data_dicts):
         dict_writer = csv.DictWriter(target_csv, fieldnames=['person_id', 'name', 'email', 'gender', 'age'])
         dict_writer.writeheader()
         for idx, data_dict in enumerate(data_dicts):
-            if idx <= 100:
-                continue
             if idx == 2000:
                 return
             try:
                 dict_writer.writerow(                                                        \
                                         {                                                    \
-                                                'person_id' : idx + 4,            \
+                                                'person_id' : idx + 1,            \
                                                 'name' : data_dict['name'],                  \
                                                 'email' : data_dict['name'][:2].lower() + "@columbia.edu",\
                                                 'gender' : random.choice(['male', 'female']),         \
@@ -93,6 +91,6 @@ def restaurant_sql_formatter(csv_data_row):
 if __name__ == "__main__":
 
     # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
-    # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
+    export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
     # csv_sql_formatter('csv/restaurant.csv', restaurant_sql_formatter)
-    export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    # export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
