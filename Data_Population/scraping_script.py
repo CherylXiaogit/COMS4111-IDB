@@ -47,21 +47,22 @@ def export_person_csv(data_dicts):
 def export_restaurant_sql(data_dicts):
     with open("sql/restaurant.sql", "wb+") as target_sql:
         for idx, data_dict in enumerate(data_dicts):
-            try:
-                restaurant_id = str(idx + 1)
-                name = data_dict['name'].replace("'", '')
-                if not(name[0] == '"' and name[-1] == '"'):
-                    name = "'" + name + "'"
-                address = data_dict['full_address'].replace('\n', ' ').replace("'", '')
-                if not(address[0] == '"' and address[-1] == '"'):
-                    address = "'" + address + "'"
-                url = "'yelp.com'"
-                location = 'point(' + str(float(data_dict['longitude'])) + ', ' + str(float(data_dict['latitude'])) + ')'
-                value_str = ", ".join([restaurant_id, name, address, url, location])
-                rest_sql_str = "INSERT INTO Restaurant (Restaurant_id, Name, Addr, Url, Location) VALUES (" + value_str + ");\n"
-                target_sql.write(rest_sql_str)
-            except UnicodeEncodeError:
-                print data_dict
+            if 'Restaurants' in data_dict['categories']:
+                try:
+                    restaurant_id = str(idx + 1)
+                    name = data_dict['name'].replace("'", '')
+                    if not(name[0] == '"' and name[-1] == '"'):
+                        name = "'" + name + "'"
+                    address = data_dict['full_address'].replace('\n', ' ').replace("'", '')
+                    if not(address[0] == '"' and address[-1] == '"'):
+                        address = "'" + address + "'"
+                    url = "'yelp.com'"
+                    location = 'point(' + str(float(data_dict['longitude'])) + ', ' + str(float(data_dict['latitude'])) + ')'
+                    value_str = ", ".join([restaurant_id, name, address, url, location])
+                    rest_sql_str = "INSERT INTO Restaurant (Restaurant_id, Name, Addr, Url, Location) VALUES (" + value_str + ");\n"
+                    target_sql.write(rest_sql_str)
+                except UnicodeEncodeError:
+                    print data_dict
 
 def csv_sql_formatter(csv_path, formatter):
     row_idx = 0
@@ -91,6 +92,6 @@ def restaurant_sql_formatter(csv_data_row):
 if __name__ == "__main__":
 
     # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
-    export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
+    # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
     # csv_sql_formatter('csv/restaurant.csv', restaurant_sql_formatter)
-    # export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
