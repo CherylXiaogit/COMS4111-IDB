@@ -1,0 +1,11 @@
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (2, 6);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (3, 13);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (4, 1129);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (3, 1698);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (4, 417);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (3, 419);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (1, 420);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (5, 431);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (8, 16);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (9, 19);
+INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (7, 21);
