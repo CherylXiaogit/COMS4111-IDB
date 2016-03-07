@@ -4,12 +4,16 @@ FROM (((Belong_to INNER JOIN Restaurant USING (Restaurant_id)) INNER JOIN Region
 GROUP BY Zip_code;
 
 /* For each region with any restaurant reviews, find out the average male and female rating of restaurants with 1 or more reviews*/
-SELECT Zip_code, AVG(male_rate), AVG(female_rate)
+SELECT *
 FROM 
-    SELECT Zip_code, Rate AS male_rate FROM ((((Belong_to INNER JOIN Restaurant USING (Restaurant_id)) INNER JOIN Region Using (Region_id)) INNER JOIN Review USING (Restaurant_id)) INNER JOIN (SELECT * FROM Person WHERE gender = 'male') AS tmp Using (Person_id))
-    UNION
-    SELECT Zip_code, Rate AS female_rate FROM ((((Belong_to INNER JOIN Restaurant USING (Restaurant_id)) INNER JOIN Region Using (Region_id)) INNER JOIN Review USING (Restaurant_id)) INNER JOIN (SELECT * FROM Person WHERE gender = 'female') AS tmp Using (Person_id)) 
-GROUP BY Zip_code;
+    (SELECT Zip_code, AVG(Rate) AS male_rating
+    FROM (((Belong_to INNER JOIN Restaurant USING (Restaurant_id)) INNER JOIN Region Using (Region_id)) INNER JOIN Review USING (Restaurant_id)) INNER JOIN (SELECT * FROM Person WHERE gender = 'male') AS tmp Using (Person_id)
+    GROUP BY Zip_code) AS Male
+    INNER JOIN
+    (SELECT Zip_code, AVG(Rate) AS female_rating
+    FROM (((Belong_to INNER JOIN Restaurant USING (Restaurant_id)) INNER JOIN Region Using (Region_id)) INNER JOIN Review USING (Restaurant_id)) INNER JOIN (SELECT * FROM Person WHERE gender = 'female') AS tmp Using (Person_id)
+    GROUP BY Zip_code) AS Female 
+    USING (Zip_code);
 
 /* For each region with any restaurant reviews, find out the average review count of restaurants with 1 or more reviews*/
 SELECT Zip_code, AVG(review_num)
