@@ -43,12 +43,12 @@
   The following is the result:
 
 
-             zip_code       |    male_rating     |   female_rating    
-      ----------------------+--------------------+--------------------
-       28202                | 2.7500000000000000 | 3.8000000000000000
-       61820                | 3.6000000000000000 | 3.6000000000000000
-       15106                | 3.2500000000000000 | 3.5000000000000000
-      (3 rows)
+                zip_code       |    male_rating     |   female_rating    
+         ----------------------+--------------------+--------------------
+          28202                | 2.7500000000000000 | 3.8000000000000000
+          61820                | 3.6000000000000000 | 3.6000000000000000
+          15106                | 3.2500000000000000 | 3.5000000000000000
+         (3 rows)
 
   - For each region with any restaurant reviews, find out the average review count of restaurants with 1 or more reviews. This helps us to find out which region has popular restaurant.
 
