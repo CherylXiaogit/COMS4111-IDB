@@ -19,12 +19,12 @@
   ```
   The following is the result:
 
-              zip_code      |        avg         
-      ----------------------+--------------------
-       28202                | 3.3333333333333333
-       61820                | 3.6000000000000000
-       15106                | 3.4000000000000000
-      (3 rows)
+                 zip_code      |        avg         
+         ----------------------+--------------------
+         28202                | 3.3333333333333333
+         61820                | 3.6000000000000000
+         15106                | 3.4000000000000000
+         (3 rows)
 
   - For each region with any restaurant reviews for both genders, find out the average male and female review rating in the region. This helps us to find out which region has better restaurant for different genders.
   
