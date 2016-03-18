@@ -45,7 +45,6 @@ def export_person_csv(data_dicts):
                 print data_dict
 
 def export_restaurant_sql(data_dicts):
-    with open("sql/feature.sql", "wb+") as feature_sql:
     with open("sql/restaurant.sql", "wb+") as restaurant_sql:
         restaurant_idx = 0
         for data_dict in data_dicts:
@@ -69,8 +68,10 @@ def export_restaurant_sql(data_dicts):
                     print data_dict
 
 def export_region_sql(data_dicts):
-    zipcode_regex = ", [A-Z]{2} ([0-9]{5})"
-    with open("sql/region.sql", "wb+") as target_sql:
+    # with open("sql/restaurant.sql". "r") as restaurant_sql:
+    # with open("sql/belong_to.sql", "wb+") as belong_to_sql:
+    with open("sql/region.sql", "wb+") as region_sql:
+        zipcode_regex = ", [A-Z]{2} ([0-9]{5})"
         region_dicts = {}
         for data_dict in data_dicts:
             try:
@@ -95,20 +96,35 @@ def export_region_sql(data_dicts):
             except AttributeError, UnicodeEncodeError:
                 print data_dict
         idx = 0
+        zipcode_dict = {}
         for zip_code, region_dict in region_dicts.items():
             region_id = str(idx)
-            print idx, region_dict
-            zip_code = zip_code
+            zipcode_dict[zip_code] = region_id
             NW_point = "point(" + str(region_dict["north"]) + ',' + str(region_dict["west"]) + ')'
             SE_point = "point(" + str(region_dict["south"]) + ',' + str(region_dict["east"]) + ')'
             region_val_str = ' ,'.join([region_id, zip_code, NW_point, SE_point])
-            target_sql.write("INSERT INTO Region (Region_id, Zip_code, NW_point, SE_point) VALUES (" + region_val_str + ');\n')
+            region_sql.write("INSERT INTO Region (Region_id, Zip_code, NW_point, SE_point) VALUES (" + region_val_str + ');\n')
             idx += 1
 
+        restaurant_sql = open("sql/restaurant.sql", "r")
+        belong_to_sql = open("sql/belong_to.sql", "wb+")
+
+        for restaurant_line in restaurant_sql:
+            match_id_obj = re.search("\) VALUES \((\d+),", restaurant_line)
+            match_zipcode_obj = re.search(zipcode_regex, restaurant_line)
+            if match_zipcode_obj and match_id_obj:
+                restaurant_id, zip_code = match_id_obj.group(1), match_zipcode_obj.group(1)
+                if zipcode_dict.get(zip_code):
+                    region_id = zipcode_dict.get(zip_code)
+                    belong_to_str = "INSERT INTO Belong_to (Restaurant_id, Region_id) VALUES (" + restaurant_id + ',' + region_id + ");\n"
+                    belong_to_sql.write(belong_to_str)
+
+        restaurant_sql.close()
+        belong_to_sql.close()
 
 if __name__ == "__main__":
     # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
     # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
-    export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
-    # export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    # export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
 
