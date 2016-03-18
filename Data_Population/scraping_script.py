@@ -1,4 +1,4 @@
-import csv, json, random
+import csv, json, random, re
 
 def yelp_json_dict_transformer(json_file_path):
     with open(json_file_path) as json_file:
@@ -45,11 +45,13 @@ def export_person_csv(data_dicts):
                 print data_dict
 
 def export_restaurant_sql(data_dicts):
-    with open("sql/restaurant.sql", "wb+") as target_sql:
-        for idx, data_dict in enumerate(data_dicts):
+    with open("sql/feature.sql", "wb+") as feature_sql:
+    with open("sql/restaurant.sql", "wb+") as restaurant_sql:
+        restaurant_idx = 0
+        for data_dict in data_dicts:
             if 'Restaurants' in data_dict['categories']:
                 try:
-                    restaurant_id = str(idx + 1)
+                    restaurant_id = str(restaurant_idx)
                     name = data_dict['name'].replace("'", '')
                     if not(name[0] == '"' and name[-1] == '"'):
                         name = "'" + name + "'"
@@ -60,38 +62,53 @@ def export_restaurant_sql(data_dicts):
                     location = 'point(' + str(float(data_dict['longitude'])) + ', ' + str(float(data_dict['latitude'])) + ')'
                     value_str = ", ".join([restaurant_id, name, address, url, location])
                     rest_sql_str = "INSERT INTO Restaurant (Restaurant_id, Name, Addr, Url, Location) VALUES (" + value_str + ");\n"
-                    target_sql.write(rest_sql_str)
+                    restaurant_idx += 1
+                    restaurant_sql.write(rest_sql_str)
                 except UnicodeEncodeError:
+                    restaurant_idx -= 1
                     print data_dict
 
-def csv_sql_formatter(csv_path, formatter):
-    row_idx = 0
-    with open(csv_path, "r") as read_csv:
-        with open("sql/restaurant.sql", "wb+") as rest_sql:
-            for row in read_csv:
-                if row_idx == 0:
-                    row_idx += 1
+def export_region_sql(data_dicts):
+    zipcode_regex = ", [A-Z]{2} ([0-9]{5})"
+    with open("sql/region.sql", "wb+") as target_sql:
+        region_dicts = {}
+        for data_dict in data_dicts:
+            try:
+                match_obj = re.search(zipcode_regex, data_dict["full_address"].replace('\n', ' '))
+                zip_code = match_obj.group(1)
+                longitude, latitude = float(data_dict["longitude"]), float(data_dict["latitude"])
+                if region_dicts.get(zip_code):
+                    if latitude > region_dicts[zip_code]["north"]:
+                        region_dicts[zip_code]["north"] = latitude
+                    if latitude < region_dicts[zip_code]["south"]:
+                        region_dicts[zip_code]["south"] = latitude
+                    if longitude > region_dicts[zip_code]["east"]:
+                        region_dicts[zip_code]["east"] = longitude
+                    if longitude < region_dicts[zip_code]["west"]:
+                        region_dicts[zip_code]["west"] = longitude
                 else:
-                    rest_sql.write(formatter(row))
+                    region_dicts[zip_code] = {}
+                    region_dicts[zip_code]["north"] = latitude
+                    region_dicts[zip_code]["south"] = latitude
+                    region_dicts[zip_code]["west"] = longitude
+                    region_dicts[zip_code]["east"] = longitude
+            except AttributeError, UnicodeEncodeError:
+                print data_dict
+        idx = 0
+        for zip_code, region_dict in region_dicts.items():
+            region_id = str(idx)
+            print idx, region_dict
+            zip_code = zip_code
+            NW_point = "point(" + str(region_dict["north"]) + ',' + str(region_dict["west"]) + ')'
+            SE_point = "point(" + str(region_dict["south"]) + ',' + str(region_dict["east"]) + ')'
+            region_val_str = ' ,'.join([region_id, zip_code, NW_point, SE_point])
+            target_sql.write("INSERT INTO Region (Region_id, Zip_code, NW_point, SE_point) VALUES (" + region_val_str + ');\n')
+            idx += 1
 
-def restaurant_sql_formatter(csv_data_row):
-    restaurant_id, name, address, url, longitude, latitude = csv_data_row.split(',')
-    if not(name[0] == '"' and name[-1] == '"'):
-        name = '"' + name + '"'
-    if not(address[0] == '"' and address[-1] == '"'):
-        address = '"' + address + '"'
-    url = "'yelp.com'"
-    location = "point(" + longitude + "," + latitude + ")"
-    value_str = ", ".join(restaurant_id, name, address, url, location)
-    rest_sql_str = "INSERT INTO Restaurant (Restaurant_id, Name, Addr, Location) VALUES (" + value_str + ");"
-    return rest_sql_str
-
-# INSERT INTO Region (Region_id, Zip_code, NW_point, SE_point) VALUES (1, 10027, point(40.817419,73.973054), point(40.802380,73.943056));
-# INSERT INTO Restaurant (Restaurant_id, Name, Addr) VALUES (1213123, 'Jin Ramen', '555 W 125 St');
 
 if __name__ == "__main__":
-
     # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
     # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
-    # csv_sql_formatter('csv/restaurant.csv', restaurant_sql_formatter)
     export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    # export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+
