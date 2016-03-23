@@ -1,4 +1,4 @@
-import csv, json, random, re
+import csv, json, random, re, time
 
 def yelp_json_dict_transformer(json_file_path):
     with open(json_file_path) as json_file:
@@ -44,6 +44,36 @@ def export_person_csv(data_dicts):
             except UnicodeEncodeError:
                 print data_dict
 
+def strTimeProp(start, end, format, prop):
+    """Get a time at a proportion of a range of two formatted times.
+
+    start and end should be strings specifying times formated in the
+    given format (strftime-style), giving an interval [start, end].
+    prop specifies how a proportion of the interval to be taken after
+    start.  The returned time will be in the specified format.
+    """
+    stime = time.mktime(time.strptime(start, format))
+    etime = time.mktime(time.strptime(end, format))
+    ptime = stime + prop * (etime - stime)
+    return time.strftime(format, time.localtime(ptime))
+
+def randomDate(start, end, prop):
+    return strTimeProp(start, end, '%m/%d/%Y', prop)
+
+def export_review_sql():
+    with open("sql/review.sql", "wb+") as review_sql:
+        for _ in xrange(10000):
+            person_id = str(random.choice(xrange(1, 2001)))
+            restaurant_id = str(random.choice(xrange(0, 20324)))
+            comment = "'Hmmmm'"
+            date = "'" + randomDate("1/1/2015", "3/20/2016", random.random()) + "'"
+            star = str(random.choice(xrange(1, 6)))
+
+            review_str = ', '.join([restaurant_id, person_id, comment, date, star])
+            review_sql_str = "INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (" + review_str + ");\n"
+
+            review_sql.write(review_sql_str)
+
 def export_restaurant_sql(data_dicts):
     with open("sql/restaurant.sql", "wb+") as restaurant_sql:
         restaurant_idx = 0
@@ -68,8 +98,6 @@ def export_restaurant_sql(data_dicts):
                     print data_dict
 
 def export_region_sql(data_dicts):
-    # with open("sql/restaurant.sql". "r") as restaurant_sql:
-    # with open("sql/belong_to.sql", "wb+") as belong_to_sql:
     with open("sql/region.sql", "wb+") as region_sql:
         zipcode_regex = ", [A-Z]{2} ([0-9]{5})"
         region_dicts = {}
@@ -126,5 +154,6 @@ if __name__ == "__main__":
     # export_restaurant_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
     # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
     # export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
-    export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    # export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
+    export_review_sql()
 
