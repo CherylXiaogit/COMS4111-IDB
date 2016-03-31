@@ -19,9 +19,9 @@ from sqlalchemy import *
 from sqlalchemy.pool import NullPool
 from flask import Flask, request, render_template, g, redirect, Response
 
-tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-app = Flask(__name__, template_folder=tmpl_dir)
-
+# tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
+# static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates/semantic/dist')
+app = Flask(__name__)
 
 #
 # The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
@@ -93,6 +93,7 @@ def teardown_request(exception):
 # see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
+
 @app.route('/')
 def index():
   """
@@ -164,6 +165,9 @@ def index():
 def another():
   return render_template("another.html")
 
+@app.route('/test')
+def test():
+  return render_template("test_semantic.html")
 
 # Example of adding new data to the database
 @app.route('/add', methods=['POST'])
@@ -199,10 +203,8 @@ if __name__ == "__main__":
         python server.py --help
 
     """
-
     HOST, PORT = host, port
     print "running on %s:%d" % (HOST, PORT)
     app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
-
 
   run()
