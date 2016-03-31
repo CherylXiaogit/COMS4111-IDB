@@ -4,7 +4,8 @@
 .DS_Store
 *.gslides
 *.txt
-*.png
 *.doc[x]
 *.ppt[x]
 *.json
+Web/templates/semantic/*
+Web/templates/node_modules/*
