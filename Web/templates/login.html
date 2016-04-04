@@ -1,16 +1,20 @@
-<!DOCTYPE html>
+<!-- <!DOCTYPE html>
 <html>
 <head>
 	<title>Login Test</title>
 </head>
 <body>
-<!-- <div
+<div
   class="fb-like"
   data-share="true"
   data-width="450"
   data-show-faces="true">
-</div> -->
-</body>
+</div>
+</body> -->
+
+{% extends "layout.html" %}
+{% block body %} 
+
 <div class="fb-login-button" data-max-rows="1" data-size="xlarge" data-show-faces="true" data-auto-logout-link="true"></div> 	
 <script>
   window.fbAsyncInit = function() {
@@ -28,7 +32,8 @@
      js.src = "//connect.facebook.net/en_US/sdk.js";
      fjs.parentNode.insertBefore(js, fjs);
    } (document, 'script', 'facebook-jssdk'));
-
-
 </script>
-</html>
+
+{% endblock %}
+
+<!-- </html> -->

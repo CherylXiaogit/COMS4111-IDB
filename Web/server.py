@@ -176,11 +176,18 @@ def add():
   g.conn.execute('INSERT INTO test VALUES (NULL, ?)', name)
   return redirect('/')
 
-
 @app.route('/login')
 def login():
-    abort(401)
-    this_is_never_executed()
+    return render_template("login.html")
+
+@app.route('/restaurant')
+def restaurant():
+    return render_template("restaurant.html")
+
+@app.route('/event')
+def event():
+    return render_template("event.html")
+
 
 
 if __name__ == "__main__":
