@@ -1,0 +1,49 @@
+Restaurant:
+- input address => neighbor 
+- find by region
+- find by feature (Put Recommend in the top place with sponsor tag)
+
+Restaurant Page:
+- desciption
+- Add review & star
+- find picture API to show the picture for the restaurant?
+
+Event:
+- create event 
+- join event
+- manage event
+
+Web:
+==============
+
+users own event
+
+==============
+
+user join event
+
+==============
+
+Event page:
+- description
+- participants
+- join button
+- search restaurant by each person location 
+	- sort by star 
+	- filter by feature
+
+Login:
+User:
+	- username
+	- email
+
+Sponsor:
+	- create restaurant
+	- time period
+	- pay money ()
+
+
+Person:
+- add personal addr / location
+ 
+
