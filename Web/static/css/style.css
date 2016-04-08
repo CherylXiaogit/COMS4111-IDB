@@ -1,6 +1,54 @@
-.videoWrapper {
-	position: relative;
-	padding-bottom: 56.25%; /* 16:9 */
+video {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -100;
+    -webkit-transform: translateX(-50%) translateY(-50%);
+        -ms-transform: translateX(-50%) translateY(-50%);
+            transform: translateX(-50%) translateY(-50%);
+ background: url('/assets/img/variousways.png') no-repeat;
+  background-size: cover;
+  -webkit-transition: 1s opacity;
+          transition: 1s opacity;
+}
+
+/*.videoWrapper {
+	position: fixed;
+	padding-bottom: 56.25%; /* 16:9 
 	padding-top: 25px;
 	min-width: 100%;
+}*/
+
+#hp-hello {
+	position: absolute;
+	font-size: 500%;
+	z-index: 4;
+	display: block;
+    top: 40%;
+    width: 100%;
+    text-align: center;
+	text-shadow: 0 1px 5px rgba(0,0,0,.1);
+	/*z-index: 100;*/
 }
+/*	h1{
+		color: rgba(255,255,255,.95);
+	}
+	h2{
+		color: #fff;
+		color: rgba(255,255,255,.95);
+		font-size: %;
+	}
+*/
+#hp-hello h1 {
+	color: rgba(255,255,255,.95);
+}
+
+#hp-hello h2{
+	color: rgba(255,255,255,.95);
+	font-size: 55%;
+}
+
