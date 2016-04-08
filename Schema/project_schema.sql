@@ -103,6 +103,7 @@ CREATE TABLE Region
     Zip_code CHAR(20) NOT NULL,
     NW_point POINT NOT NULL,
     SE_point POINT NOT NULL,
+    UNIQUE (Zip_code),
     PRIMARY KEY(Region_id)
 );
 
@@ -115,6 +116,7 @@ CREATE TABLE PJoinE
     Join_id SERIAL,
     Event_id INTEGER NOT NULL,
     Person_id INTEGER NOT NULL,
+    UNIQUE (Person_id, Event_id),
     PRIMARY KEY(Join_id),
     FOREIGN KEY (Person_id) REFERENCES Person,
     FOREIGN KEY (Event_id) REFERENCES Event
@@ -131,6 +133,7 @@ CREATE TABLE Own
     Own_id SERIAL,
     Event_id INTEGER NOT NULL,
     Person_id INTEGER NOT NULL,
+    UNIQUE (Person_id, Event_id),
     PRIMARY KEY(Own_id),
     FOREIGN KEY (Person_id) REFERENCES Person,
     FOREIGN KEY (Event_id) REFERENCES Event
