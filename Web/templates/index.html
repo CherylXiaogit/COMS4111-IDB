@@ -24,11 +24,15 @@
 </video>
 <div id="hp-hello">
   <!-- <h1 class="ui large header">Hi {{username}}</h1> -->
-  <h1 class="ui large header">Hi, Chris Hsu</h1>
-
+  <h1 class="ui large header">
+    {% if username %}
+      Hi, {{username}}
+    {% else %}
+      Welcome to Foodie!
+    {% endif %}
+  </h1>
   <h2 class="ui large header">Find the best place for your event!</h2>
 </div>
-
 
 {% endblock %}
 

@@ -147,7 +147,7 @@ def index():
     # context = dict(data = names)
 
 
-    context = dict(username = "")
+    context = dict()
     username = request.cookies.get('username')
     if username:
         print "there is a username cookie!"
@@ -179,7 +179,18 @@ def add():
 
 @app.route('/login')
 def login():
-    return render_template("login.html")
+    if request.method == "GET":
+        return render_template("login.html")
+    else:
+        return render_template("login.html")
+
+@app.route('/signup')
+def signup():
+    if request.method == "GET":
+        return render_template("signup.html")
+    else: # POST
+        return render_template("signup.html")
+
 
 @app.route('/restaurant')
 def restaurant():
