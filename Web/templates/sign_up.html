@@ -17,6 +17,9 @@
 <script>
 $(document)
   .ready(function() {
+    $('.ui.selection.dropdown')
+        .dropdown()
+    ;
     $('.ui.form')
       .form({
         fields: {
@@ -66,16 +69,33 @@ $(document)
         <div class="field">
           <div class="ui left icon input">
             <i class="user icon"></i>
-            <input type="text" name="email" placeholder="E-mail address">
+            <input type="text" name="username" placeholder="User Name">
           </div>
         </div>
         <div class="field">
           <div class="ui left icon input">
-            <i class="lock icon"></i>
-            <input type="password" name="password" placeholder="Password">
+            <i class="mail icon"></i>
+            <input type="text" name="email" placeholder="Email Address">
           </div>
         </div>
-        <div class="ui fluid large teal submit button">Sign up</div>
+        <div class="field">
+          <div class="ui left icon input">
+            <i class="heart icon"></i>
+            <input type="text" name="age" placeholder="Your Age Please">
+          </div>
+        </div>
+        <div class="field">
+          <div class="ui selection dropdown">
+            <input type="hidden" name="gender">
+            <i class="dropdown icon"></i>
+            <div class="default text">Gender</div>
+            <div class="menu">
+              <div class="item" data-value="male">male</div>
+              <div class="item" data-value="female">female</div>
+            </div>
+          </div>
+        </div>
+        <div class="ui fluid large teal submit button">Sign Up</div>
       </div>
       <div class="ui error message"></div>
     </form>
