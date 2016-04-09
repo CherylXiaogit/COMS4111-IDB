@@ -32,18 +32,23 @@ Event page:
 	- sort by star 
 	- filter by feature
 
-Login:
-User:
-	- username
-	- email
+Person:
+- add personal addr / location 
 
+Optional:
 Sponsor:
 	- create restaurant
 	- time period
 	- pay money ()
 
+Done:
 
-Person:
-- add personal addr / location
- 
+Login / Sign Up:
+User:
+	- username
+	- email
+
+*************
+
+
 
