@@ -17,7 +17,10 @@ Read about it online.
 import os
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, request, render_template, g, redirect, Response
+from flask import Flask, g, make_response, request, render_template, redirect, Response
+
+from DButil import get_first_result
+
 
 # tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
 # static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates/semantic/dist')
@@ -46,11 +49,11 @@ engine = create_engine(DATABASEURI)
 # Example of running queries in your database
 # Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
 #
-engine.execute("""CREATE TABLE IF NOT EXISTS test (
-  id serial,
-  name text
-);""")
-engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
+# engine.execute("""CREATE TABLE IF NOT EXISTS test (
+#   id serial,
+#   name text
+# );""")
+# engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
 
 
 @app.before_request
@@ -177,20 +180,32 @@ def add():
     g.conn.execute('INSERT INTO test VALUES (NULL, ?)', name)
     return redirect('/')
 
-@app.route('/login')
+@app.route('/login', methods=["POST", "GET"])
 def login():
     if request.method == "GET":
         return render_template("login.html")
     else:
-        return render_template("login.html")
+        email = request.form["email"]
+        username = request.form["username"]
+        cursor = g.conn.execute('SELECT Name, Email FROM Person WHERE Name = %s and Email = %s', (username, email))
+        result = get_first_result(cursor)
+        if result:
+            resp = make_response(redirect("/"))
+            resp.set_cookie('username', username)
+            return resp
+        else:
+            print "No such user!"
+            return render_template("login.html")
 
-@app.route('/signup')
+        
+@app.route('/sign_up')
 def signup():
     if request.method == "GET":
-        return render_template("signup.html")
+        return render_template("sign_up.html")
     else: # POST
-        return render_template("signup.html")
-
+        # cursor = g.conn.execute("INSERT INTO Person (Event_id, Person_id) VALUES (1, 99);")
+        return render_template("sign_up.html")
+        
 
 @app.route('/restaurant')
 def restaurant():
