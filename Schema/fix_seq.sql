@@ -1,0 +1,11 @@
+SELECT setval('person_person_id_seq', (SELECT MAX(Person_id) FROM Person)+1);
+SELECT setval('event_event_id_seq', (SELECT MAX(Event_id) FROM Event)+1);
+SELECT setval('feature_feature_id_seq', (SELECT MAX(Feature_id) FROM Feature)+1);
+SELECT setval('review_review_id_seq', (SELECT MAX(Review_id) FROM Review)+1);
+SELECT setval('pjoine_join_id_seq', (SELECT MAX(Join_id) FROM PJoinE)+1);
+SELECT setval('own_own_id_seq', (SELECT MAX(Own_id) FROM Own)+1);
+SELECT setval('write_write_id_seq', (SELECT MAX(Write_id) FROM Write)+1);
+SELECT setval('get_get_id_seq', (SELECT MAX(Get_id) FROM Get)+1);
+SELECT setval('belong_to_belong_to_id_seq', (SELECT MAX(belong_to_id) FROM belong_to)+1);
+SELECT setval('recommend_recommend_id_seq', (SELECT MAX(recommend_id) FROM recommend)+1);
+SELECT setval('special_for_special_id_seq', (SELECT MAX(special_id) FROM special_for)+1);
