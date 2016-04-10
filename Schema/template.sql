@@ -243,3 +243,18 @@ FROM
         INNER JOIN Person USING(Person_id)
     )
 ;
+
+/* Find Events that a person does not manage nor join */
+SELECT *
+FROM Event 
+WHERE Event_id NOT IN (
+    (
+    SELECT Event_id
+    FROM Own
+    WHERE Person_id = 2
+    ) UNION (
+    SELECT Event_id
+    FROM PJoinE
+    WHERE Person_id = 2
+    ) 
+);
