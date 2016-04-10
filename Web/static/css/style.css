@@ -1,3 +1,8 @@
+article {
+  width: 80%;
+  margin: auto;
+}
+
 video {
     position: fixed;
     top: 50%;
@@ -15,13 +20,6 @@ video {
     -webkit-transition: 1s opacity;
     transition: 1s opacity;
 }
-
-/*.videoWrapper {
-	position: fixed;
-	padding-bottom: 56.25%; /* 16:9 
-	padding-top: 25px;
-	min-width: 100%;
-}*/
 
 #hp-hello {
 	position: absolute;

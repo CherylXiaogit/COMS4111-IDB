@@ -1,75 +1,23 @@
 {% extends "layout.html" %}
 {% block body %} 
 
-<h2 class="ui header">
-  Event You Own
-</h2>
-<table class="ui celled padded table">
-  <thead>
-    <tr>
-    <th class="single line">Event Name</th>
-    <th>Description</th>
-    <th>Time</th>
-    <th>Participants</th>
-  	</tr>
-  </thead>
-  <tbody>
-    {% for event_dict in own_events %}
-    <tr>
-      <td>
-        <h2 class="ui center aligned header">
-        	{{ event_dict["name"] }}
-        </h2>
-      </td>
-      <td class="left aligned">
-      		{{ event_dict["desc"] }}
-      </td>
-      <td class="single line">
-      	   {{ event_dict["time"] }}
-      </td>
-      <td>
-      	   {{ event_dict["number"] }}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-<h2 class="ui header">
-  Event You Join
-</h2>
-<table class="ui celled padded table">
-  <thead>
-    <tr>
-    <th class="single line">Event Name</th>
-    <th>Description</th>
-    <th>Time</th>
-    <th>Participants</th>
-  	</tr>
-  </thead>
-  <tbody>
-    {% for event_dict in join_events %}
-    <tr>
-      <td>
-        <h2 class="ui center aligned header">
-        	{{ event_dict["name"] }}
-        </h2>
-      </td>
-      <td class="left aligned">
-      		{{ event_dict["desc"] }}
-      </td>
-      <td class="single line">
-      	   {{ event_dict["time"] }}
-      </td>
-      <td>
-      	   {{ event_dict["number"] }}
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
-
-<button class="ui primary button" href="/create_event">
-  Create Event!
-</button>
+<article>
+	<h2 class="ui dividing header">
+  		{{ name }}
+  	</h2>
+  	<br>
+  	<h3 class="ui teal header">
+  		Event Time: {{ datetime }}
+  	</h3>
+  	<div class="ui huge teal message">
+  		{{ desc }}
+  	</div>
+  	<form method="POST" action="join_event">
+  	   <button class="large ui teal submit button">
+        Join This Event!
+        <input style="display: none;" name="event_id" value="{{ event_id }}"></input>
+       </button>
+  	</form>
+</article>
 
 {% endblock %}

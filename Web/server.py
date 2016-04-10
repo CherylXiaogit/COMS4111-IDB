@@ -32,7 +32,7 @@ from sqlalchemy.pool import NullPool
 
 from DBUtil import get_first_result
 from DBUtil import get_results
-from DBUtil import USER_OWN_EVENTS_SQL, USER_JOIN_EVENTS_SQL
+from DBUtil import FIND_USER_OWN_EVENTS_SQL, FIND_USER_JOIN_EVENTS_SQL, CREATE_OWN_SQL, CREATE_EVENT_SQL, FIND_EVENT_WITH_ID_SQL, JOIN_EVENT_SQL
 from WebUtil import set_cookie_redirct
 
 app = Flask(__name__)
@@ -228,24 +228,51 @@ def collect_events(events):
     return [{'name': event[1],                                                 \
              'desc': event[2],                                                 \
              'time': datetime.combine(event[3], event[4])                      \
-                                .strftime("%Y-%m-%d %H:%M:%S"),                \
+                             .strftime("%Y-%m-%d %H:%M:%S"),                   \
              'number': event[5]}                                               \
              for event in events]
 
+
 @app.route('/event')
 def event():
-    user_id = request.cookies.get("user_id")
-    own_cursor = g.conn.execute(USER_OWN_EVENTS_SQL, 99)
-    join_cursor = g.conn.execute(USER_JOIN_EVENTS_SQL, 3)
-    own_events = get_results(own_cursor)
-    join_events = get_results(join_cursor)
-    data = dict(own_events=collect_events(own_events),                         \
-                join_events=collect_events(join_events))
-    return render_template("event.html", **data)
+    event_id = request.args.get("event_id")
+    if event_id:
+        cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
+        event = get_first_result(cursor)
+        event_dict = dict(name=event[1], desc=event[2],                        \
+                          datetime=datetime.combine(event[3], event[4])        \
+                                            .strftime("%Y-%m-%d %H:%M:%S"),    \
+                          event_id=event_id)
+        return render_template("event.html", **event_dict)
+    else:
+        user_id = request.cookies.get("user_id")
+        own_cursor = g.conn.execute(FIND_USER_OWN_EVENTS_SQL, user_id)
+        join_cursor = g.conn.execute(FIND_USER_JOIN_EVENTS_SQL, user_id)
+        own_events = get_results(own_cursor)
+        join_events = get_results(join_cursor)
+        data = dict(own_events=collect_events(own_events),                     \
+                    join_events=collect_events(join_events))
+        return render_template("user_events.html", **data)
 
-@app.route('/create_event')
+@app.route('/create_event', methods=["GET", "POST"])
 def create_event():
-    return render_template("create_event.html", **data)
+    if request.method == "GET":
+        return render_template("create_event.html")
+    else: # POST
+        event_date, event_time = request.form["event_time"].split(" - ")
+        event_params = request.form["event_name"],                             \
+                       request.form["event_desc"],                             \
+                       event_date, event_time
+        g.conn.execute(CREATE_EVENT_SQL, event_params)
+        g.conn.execute(CREATE_OWN_SQL, request.cookies.get("user_id"))
+        return redirect("/event")
+
+@app.route('/join_event', methods=["POST"])
+def join_event():
+    event_id = request.form["event_id"]
+    user_id = request.cookies.get("user_id")
+    g.conn.execute(JOIN_EVENT_SQL, (event_id, user_id))
+    return redirect("/event")
 
 if __name__ == "__main__":
   import click

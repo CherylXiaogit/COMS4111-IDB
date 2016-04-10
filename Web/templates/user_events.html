@@ -1,0 +1,81 @@
+{% extends "layout.html" %}
+{% block body %} 
+
+<article>
+<h2 class="ui header">
+  Event You Own
+</h2>
+<table class="ui celled padded table">
+  <thead>
+    <tr>
+    <th class="single line">Event Name</th>
+    <th>Description</th>
+    <th>Time</th>
+    <th>Participants</th>
+  	</tr>
+  </thead>
+  <tbody>
+    {% for event_dict in own_events %}
+    <tr>
+      <td>
+        <h2 class="ui center aligned header">
+        	{{ event_dict["name"] }}
+        </h2>
+      </td>
+      <td class="left aligned">
+      		{{ event_dict["desc"] }}
+      </td>
+      <td class="single line">
+      	   {{ event_dict["time"] }}
+      </td>
+      <td>
+      	   {{ event_dict["number"] }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<h2 class="ui header">
+  Event You Join
+</h2>
+<table class="ui celled padded table">
+  <thead>
+    <tr>
+    <th class="single line">Event Name</th>
+    <th>Description</th>
+    <th>Time</th>
+    <th>Participants</th>
+  	</tr>
+  </thead>
+  <tbody>
+    {% for event_dict in join_events %}
+    <tr>
+      <td>
+        <h2 class="ui center aligned header">
+        	{{ event_dict["name"] }}
+        </h2>
+      </td>
+      <td class="left aligned">
+      		 {{ event_dict["desc"] }}
+      </td>
+      <td class="single line">
+      	   {{ event_dict["time"] }}
+      </td>
+      <td>
+      	   {{ event_dict["number"] }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<br><br>
+<form action="/create_event" method="get">
+  <button class="ui primary button">
+    Create Event!
+  </button>
+</form>
+<!-- TODO(Chris): Add Find some events to join (user doesn't join) 
+                  button => link to all the events => choose event to join -->
+</article>
+<br><br>
+{% endblock %}
