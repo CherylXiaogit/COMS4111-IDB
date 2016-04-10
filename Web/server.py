@@ -8,6 +8,10 @@ To run locally:
 
     python server.py
 
+To run locally in debug mode:
+
+    python server.py --debug
+
 Go to http://localhost:8111 in your browser.
 
 A debugger such as "pdb" may be helpful for debugging.
@@ -15,28 +19,24 @@ Read about it online.
 """
 
 import os
+from datetime import datetime
+from flask import Flask
+from flask import g
+from flask import make_response
+from flask import redirect
+from flask import render_template
+from flask import request
+from flask import Response
 from sqlalchemy import *
 from sqlalchemy.pool import NullPool
-from flask import Flask, g, make_response, request, render_template, redirect, Response
 
-from DButil import get_first_result
+from DBUtil import get_first_result
+from DBUtil import get_results
+from DBUtil import USER_OWN_EVENTS_SQL, USER_JOIN_EVENTS_SQL
+from WebUtil import set_cookie_redirct
 
-
-# tmpl_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates')
-# static_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'templates/semantic/dist')
 app = Flask(__name__)
 
-#
-# The following is a dummy URI that does not connect to a valid database. You will need to modify it to connect to your Part 2 database in order to use the data.
-#
-# XXX: The URI should be in the format of: 
-#
-#     postgresql://USER:PASSWORD@w4111a.eastus.cloudapp.azure.com/proj1part2
-#
-# For example, if you had username gravano and password foobar, then the following line would be:
-#
-#     DATABASEURI = "postgresql://gravano:foobar@w4111a.eastus.cloudapp.azure.com/proj1part2"
-#
 
 DATABASEURI = "postgresql://hl2907:481516losT_@w4111vm.eastus.cloudapp.azure.com/w4111"
 
@@ -187,35 +187,65 @@ def login():
     else:
         email = request.form["email"]
         username = request.form["username"]
-        cursor = g.conn.execute('SELECT Name, Email FROM Person WHERE Name = %s and Email = %s', (username, email))
+        cursor = g.conn.execute('SELECT Person_id, Name, Email'                \
+                                'FROM Person WHERE Name = %s and Email = %s',  \
+                                (username, email))
         result = get_first_result(cursor)
         if result:
             resp = make_response(redirect("/"))
             resp.set_cookie('username', username)
+            resp.set_cookie('email', email)
+            resp.set_cookie('user_id', str(result[0]))
             return resp
         else:
+            # TODO(Chris): Handle the not found case error message
             print "No such user!"
-            return render_template("login.html")
-
+            return render_template("sign_up.html")
         
-@app.route('/sign_up')
+@app.route('/sign_up', methods=["POST", "GET"])
 def signup():
     if request.method == "GET":
         return render_template("sign_up.html")
     else: # POST
-        # cursor = g.conn.execute("INSERT INTO Person (Event_id, Person_id) VALUES (1, 99);")
-        return render_template("sign_up.html")
+        params = (request.form["username"], request.form["email"],             \
+                    request.form["age"], request.form["gender"])
+        cursor = g.conn.execute("INSERT INTO Person (Name, Email, Age, Gender)"\
+                                "VALUES (%s, %s, %s, %s);", params)
+        if cursor:
+            # TODO(Chris): Add the user sign up info into cookie like login
+            return set_cookie_redirct('username', params[0], "/")
+        else:
+            # TODO(Chris): Handle the error format for signup, 
+            # ex. enter age with not numbers or some db callback
+            print "Something happens in DB"
+            return render_template("sign_up.html")
         
-
 @app.route('/restaurant')
 def restaurant():
     return render_template("restaurant.html")
 
+def collect_events(events):
+    return [{'name': event[1],                                                 \
+             'desc': event[2],                                                 \
+             'time': datetime.combine(event[3], event[4])                      \
+                                .strftime("%Y-%m-%d %H:%M:%S"),                \
+             'number': event[5]}                                               \
+             for event in events]
+
 @app.route('/event')
 def event():
-    return render_template("event.html")
+    user_id = request.cookies.get("user_id")
+    own_cursor = g.conn.execute(USER_OWN_EVENTS_SQL, 99)
+    join_cursor = g.conn.execute(USER_JOIN_EVENTS_SQL, 3)
+    own_events = get_results(own_cursor)
+    join_events = get_results(join_cursor)
+    data = dict(own_events=collect_events(own_events),                         \
+                join_events=collect_events(join_events))
+    return render_template("event.html", **data)
 
-
+@app.route('/create_event')
+def create_event():
+    return render_template("create_event.html", **data)
 
 if __name__ == "__main__":
   import click

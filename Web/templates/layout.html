@@ -27,6 +27,27 @@
     <title>Foodie</title>
 </head>
 <body>
+<div class="ui pointing top menu">
+  <div class="item">
+    <img src="static/img/logo.png">
+  </div>
+  <a class="item" id="home" href="/">Foodie Home</a>
+  <a class="item" id="restaurant" href="/restaurant">Find Restaurants</a>
+  <a class="item" id="event" href="/event">Find Events</a>
+  <a class="item" id="login" href="/login">Log in / Sign up</a>
+</div>
+<script type="text/javascript">
+  var filename = document.location.href.match(/[^\/]+$/);
+  console.log(filename);
+  if (filename == null) {
+  	filename = "home";
+  } else {
+  	filename = filename[0];
+  }
+  $("#" + filename)
+    .attr('class', 'active item')
+  ;
+</script>
 {% block body %}
 {% endblock %}
 </body>

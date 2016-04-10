@@ -1,30 +1,11 @@
-<!--  <h1>Some famous Computer Scientists</h1>
-  <div>{{data}}</div>
-
-  <div>
-    {% for n in data %}
-    <div>{{n}}</div>
-    {% endfor %}
-  </div>
- -->
-
 {% extends "layout.html" %}
 {% block body %} 
 
-<div class="ui pointing top fixed menu">
-  <div class="item">
-    <img src="static/img/logo.png">
-  </div>
-  <a class="active item">Foodie Home</a>
-  <a class="item" href="/restaurant">Find Restaurants</a>
-  <a class="item" href="/event">Find Events</a>
-  <a class="item" href="/login">Log in / Sign up</a>
-</div>
+<!-- TO DO(Chris): Add Pause, Play, Mute, Unmute Button for the video -->
 <video autoplay loop muted>
     <source src="static/img/background.mp4" type="video/mp4">
 </video>
 <div id="hp-hello">
-  <!-- <h1 class="ui large header">Hi {{username}}</h1> -->
   <h1 class="ui large header">
     {% if username %}
       Hi, {{username}}
@@ -36,7 +17,3 @@
 </div>
 
 {% endblock %}
-
-<!-- <form method="POST" action="/add">
-<p>Name of new computer scientist: <input type="text" name="name"> <input type="submit" value="Add"></p>
-</form>
