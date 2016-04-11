@@ -192,10 +192,22 @@ ORDER BY AVG(rate) DESC;
 INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (6239, 1147, 'Hmmmm', '07/02/2015', 2);
 
 /* Find Review by Person Id, order by date */
-SELECT * from review where Person_id = 1 order by date DESC;
+SELECT * 
+FROM 
+Review
+WHERE Person_id = 1 
+ORDER BY date DESC;
 
 /* Find Review by Restaurant_id, order by date */
 SELECT * from review where Restaurant_id = 10 order by date DESC;
+
+/* Find Review and person info by Restaurant_id, order by date */
+SELECT * 
+FROM 
+(Review INNER JOIN (SELECT Person_id, Name as Person_name FROM Person) AS P1 USING(Person_id) ) AS T1
+INNER JOIN (SELECT Restaurant_id, Name as Restaurant_name FROM Restaurant) AS R1 USING(Restaurant_id)
+WHERE Person_id = 1 
+ORDER BY date DESC;
 
 /* Add Event */
 INSERT INTO Event (Name, Description, EDate, ETime) VALUES ('2016 CU Grad Fair!', 'As graduation approacahes, you will want to make sure you have all everything you need for the big day(s)!Order your cap and gown, graduation announcements, class ring, and more at the Grad Fair in the Columbia University Bookstore, March 8-10, 11:00 a.m.-7:00 p.m.Vendors will be offering discounts, and students who attend get $15 off a diploma frame and 25% off all clearance and Class of 2016 merchandise.', '3/8/2016', '11:00');
