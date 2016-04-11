@@ -206,7 +206,7 @@ SELECT *
 FROM 
 (Review INNER JOIN (SELECT Person_id, Name as Person_name FROM Person) AS P1 USING(Person_id) ) AS T1
 INNER JOIN (SELECT Restaurant_id, Name as Restaurant_name FROM Restaurant) AS R1 USING(Restaurant_id)
-WHERE Person_id = 1 
+WHERE Restaurant_id = 10
 ORDER BY date DESC;
 
 /* Add Event */
