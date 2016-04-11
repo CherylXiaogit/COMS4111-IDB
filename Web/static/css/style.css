@@ -32,12 +32,11 @@ video {
 	text-shadow: 0 1px 5px rgba(0,0,0,.1);
 	/*z-index: 100;*/
 }
-#hp-hello h1 {
+#hp-hello > h1, #hp-hello > h2 {
 	color: rgba(255,255,255,.95);
 }
 
-#hp-hello h2 {
-	color: rgba(255,255,255,.95);
+#hp-hello > h2 {
 	font-size: 80%;
 }
 

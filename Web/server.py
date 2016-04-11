@@ -32,17 +32,22 @@ from sqlalchemy.pool import NullPool
 
 from DBUtil import get_first_result
 from DBUtil import get_results
-from DBUtil import FIND_USER_OWN_EVENTS_SQL, FIND_USER_JOIN_EVENTS_SQL, CREATE_OWN_SQL, CREATE_EVENT_SQL, FIND_EVENT_WITH_ID_SQL, JOIN_EVENT_SQL
-from WebUtil import set_cookie_redirct
+from DBUtil import DATABASEURI, FIND_USER_OWN_EVENTS_SQL,                      \
+                    SIGNUP_USER_SQL, FIND_USER_JOIN_EVENTS_SQL, CREATE_OWN_SQL,\
+                    GET_LAST_USER_ID_SQL, LOGIN_USER_SQL,                      \
+                    CREATE_EVENT_SQL, FIND_EVENT_WITH_ID_SQL, JOIN_EVENT_SQL,  \
+                    FIND_ALL_FEATURES_SQL, FIND_ALL_REGION_ID_ZIPCODE_SQL,     \
+                    FIND_RESTAURANT_BY_ZIPCODE, FIND_RESTAURANT_BY_FEATURE,    \
+                    FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE
+
+from WebUtil import set_cookie_redirct, delete_existing_user_cookie
 
 app = Flask(__name__)
-
-
-DATABASEURI = "postgresql://hl2907:481516losT_@w4111vm.eastus.cloudapp.azure.com/w4111"
 
 #
 # This line creates a database engine that knows how to connect to the URI above.
 #
+
 engine = create_engine(DATABASEURI)
 
 #
@@ -54,7 +59,7 @@ engine = create_engine(DATABASEURI)
 #   name text
 # );""")
 # engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
-
+#
 
 @app.before_request
 def before_request():
@@ -108,48 +113,6 @@ def index():
 
     See its API: http://flask.pocoo.org/docs/0.10/api/#incoming-request-data
     """
-
-    # DEBUG: this is debugging code to see what request looks like
-    print request.args
-
-    #
-    # example of a database query
-    #
-    # cursor = g.conn.execute("SELECT Name FROM Person")
-    # names = []
-    # for result in cursor:
-    #     names.append(result['name'])  # can also be accessed using result[0]
-    # cursor.close()
-
-    #
-    # Flask uses Jinja templates, which is an extension to HTML where you can
-    # pass data to a template and dynamically generate HTML based on the data
-    # (you can think of it as simple PHP)
-    # documentation: https://realpython.com/blog/python/primer-on-jinja-templating/
-    #
-    # You can see an example template in templates/index.html
-    #
-    # context are the variables that are passed to the template.
-    # for example, "data" key in the context variable defined below will be 
-    # accessible as a variable in index.html:
-    #
-    #     # will print: [u'grace hopper', u'alan turing', u'ada lovelace']
-    #     <div>{{data}}</div>
-    #     
-    #     # creates a <div> tag for each element in data
-    #     # will print: 
-    #     #
-    #     #   <div>grace hopper</div>
-    #     #   <div>alan turing</div>
-    #     #   <div>ada lovelace</div>
-    #     #
-    #     {% for n in data %}
-    #     <div>{{n}}</div>
-    #     {% endfor %}
-    #
-    # context = dict(data = names)
-
-
     context = dict()
     username = request.cookies.get('username')
     if username:
@@ -160,25 +123,9 @@ def index():
     # return render_template("index.html", **context)
     return render_template("index.html", **context)
 
-#
-# This is an example of a different path.  You can see it at:
-# 
-#     localhost:8111/another
-#
-# Notice that the function name is another() rather than index()
-# The functions for each app.route need to have different names
-#
-
 @app.route('/test')
 def test():
     return render_template("test_semantic.html")
-
-# Example of adding new data to the database
-@app.route('/add', methods=['POST'])
-def add():
-    name = request.form['name']
-    g.conn.execute('INSERT INTO test VALUES (NULL, ?)', name)
-    return redirect('/')
 
 @app.route('/login', methods=["POST", "GET"])
 def login():
@@ -187,12 +134,11 @@ def login():
     else:
         email = request.form["email"]
         username = request.form["username"]
-        cursor = g.conn.execute('SELECT Person_id, Name, Email'                \
-                                'FROM Person WHERE Name = %s and Email = %s',  \
-                                (username, email))
+        cursor = g.conn.execute(LOGIN_USER_SQL, (username, email))
         result = get_first_result(cursor)
         if result:
             resp = make_response(redirect("/"))
+            delete_existing_user_cookie(resp)
             resp.set_cookie('username', username)
             resp.set_cookie('email', email)
             resp.set_cookie('user_id', str(result[0]))
@@ -201,37 +147,99 @@ def login():
             # TODO(Chris): Handle the not found case error message
             print "No such user!"
             return render_template("sign_up.html")
+
         
 @app.route('/sign_up', methods=["POST", "GET"])
 def signup():
-    if request.method == "GET":
-        return render_template("sign_up.html")
-    else: # POST
-        params = (request.form["username"], request.form["email"],             \
-                    request.form["age"], request.form["gender"])
-        cursor = g.conn.execute("INSERT INTO Person (Name, Email, Age, Gender)"\
-                                "VALUES (%s, %s, %s, %s);", params)
-        if cursor:
-            # TODO(Chris): Add the user sign up info into cookie like login
-            return set_cookie_redirct('username', params[0], "/")
-        else:
-            # TODO(Chris): Handle the error format for signup, 
-            # ex. enter age with not numbers or some db callback
-            print "Something happens in DB"
+    try:
+        if request.method == "GET":
             return render_template("sign_up.html")
-        
+        else: # POST
+            params = (request.form["username"], request.form["email"],             \
+                        request.form["age"], request.form["gender"])
+            g.conn.execute(SIGNUP_USER_SQL, params)
+            cursor = g.conn.execute(GET_LAST_USER_ID_SQL)
+            result = get_first_result(cursor)
+            if cursor:
+                resp = make_response(redirect("/"))
+                delete_existing_user_cookie(resp)
+                resp.set_cookie('username', request.form["username"])
+                resp.set_cookie('email', request.form["email"])
+                resp.set_cookie('user_id', str(result[0]))
+                return resp
+            else:
+                # TODO(Chris): Handle the error format for signup, 
+                # ex. enter age with not numbers or some db callback
+                print "Something happens in DB"
+                return render_template("sign_up.html")
+    except:
+        return redirect("/")
+'''
+Restaurant Part:
+- restaurant
+- 
+'''
+
+def collect_features(feature_tuples):
+    return [{'id': feature[0], 'name': feature[1]} for feature in feature_tuples]
+
+def collect_regions(region_tuples):
+    return [{'id': region[0], 'zipcode': region[1]} for region in region_tuples]
+
 @app.route('/restaurant')
 def restaurant():
-    return render_template("restaurant.html")
+    restaurant_id = request.args.get('restaurant_id')
+    if restaurant_id:
+        return render_template("restaurant_review.html")
+    else:
+        feature_cursor = g.conn.execute(FIND_ALL_FEATURES_SQL)
+        region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SQL)
+        feature_tuples = get_results(feature_cursor)
+        region_tuples = get_results(region_cursor)
+        features = collect_features(feature_tuples)
+        regions = collect_regions(region_tuples)
+        return render_template("restaurant.html", features=features, regions=regions)
 
-def collect_events(events):
+def collect_restaurants(restaurant_tuples):
+    return [{'id': restaurant[0], 'name': restaurant[1],                       \
+            'addr': restaurant[2], 'location': restaurant[4],                  \
+            'rate': round(restaurant[5], 2), 'star': int(restaurant[5])}       \
+            for restaurant in restaurant_tuples]
+
+@app.route('/find_restaurants', methods=["POST"])
+def find_restaurants():
+    zipcode = request.form["zipcode"]
+    feature_id = request.form["feature_id"]
+    if not (zipcode or feature_id):
+        return redirect("/restaurant")
+    else:
+        if zipcode and feature_id:
+            cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE, zipcode)
+        elif feature_id:
+            cursor = g.conn.execute(FIND_RESTAURANT_BY_FEATURE, feature_id)
+        else:
+            cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE, zipcode)
+        results = get_results(cursor)
+        restaurants = collect_restaurants(results)
+        return render_template("restaurant_results.html", restaurants=restaurants)
+    
+'''
+Event Part:
+- event
+    - with event_id
+    - without event_id
+- create_event
+- join_event
+
+'''
+
+def collect_events(event_tuples):
     return [{'name': event[1],                                                 \
              'desc': event[2],                                                 \
              'time': datetime.combine(event[3], event[4])                      \
                              .strftime("%Y-%m-%d %H:%M:%S"),                   \
              'number': event[5]}                                               \
-             for event in events]
-
+             for event in event_tuples]
 
 @app.route('/event')
 def event():
@@ -275,27 +283,27 @@ def join_event():
     return redirect("/event")
 
 if __name__ == "__main__":
-  import click
+    import click
 
-  @click.command()
-  @click.option('--debug', is_flag=True)
-  @click.option('--threaded', is_flag=True)
-  @click.argument('HOST', default='0.0.0.0')
-  @click.argument('PORT', default=8111, type=int)
-  def run(debug, threaded, host, port):
-    """
-    This function handles command line parameters.
-    Run the server using:
+    @click.command()
+    @click.option('--debug', is_flag=True)
+    @click.option('--threaded', is_flag=True)
+    @click.argument('HOST', default='0.0.0.0')
+    @click.argument('PORT', default=8111, type=int)
+    def run(debug, threaded, host, port):
+        """
+        This function handles command line parameters.
+        Run the server using:
 
-        python server.py
+            python server.py
 
-    Show the help text using:
+        Show the help text using:
 
-        python server.py --help
+            python server.py --help
 
-    """
-    HOST, PORT = host, port
-    print "running on %s:%d" % (HOST, PORT)
-    app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
+        """
+        HOST, PORT = host, port
+        print "running on %s:%d" % (HOST, PORT)
+        app.run(host=HOST, port=PORT, debug=debug, threaded=threaded)
 
-  run()
+    run()
