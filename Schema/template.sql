@@ -189,7 +189,7 @@ GROUP BY Restaurant_id
 ORDER BY AVG(rate) DESC;
 
 /* Add Review */
-INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (6239, 1147, 'Hmmmm', '07/02/2015', 2);
+INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (6239, 1147, 'Hmmmm', '07/02/2015', 2);
 
 /* Find Review by Person Id, order by date */
 SELECT * from review where Person_id = 1 order by date DESC;

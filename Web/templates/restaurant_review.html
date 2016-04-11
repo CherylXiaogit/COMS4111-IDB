@@ -1,32 +1,73 @@
 {% extends "layout.html" %}
 {% block body %} 
+<script type="text/javascript">
+	$(document)
+    .ready(function() {
+        $('.ui.medium.star.rating')
+          .rating('disable')
+        ;
+        $('.ui.huge.star.rating')
+          .rating('enable')
+        ; 
+        $('.ui.huge.star.rating')
+          .click(function() {
+          		$('#star_val')
+          			.attr("value", 
+          				$('.icon.active', '.ui.huge.star.rating').length
+          			)
+          		;
+          })
+        ;
+    })
+  ;
+</script>
 
 <article>
-
+<h2 class="ui huge teal header">
+	{{ reviews[0]["restaurant_name"] }}
+</h2>
+<h3 class="ui medium header">
+	{{ reviews[0]["addr"] }}
+</h3>
 <div class="ui comments">
-  <div class="comment">
-    <div class="content">
-      <a class="author">Joe Henderson</a>
-      <div class="metadata">
-        <div class="date">1 day ago</div>
-      </div>
-      <div class="text">
-        <p>The hours, minutes and seconds stand as visible reminders that your effort put them all there. </p>
-        <p>Preserve until your next run, when the watch lets you see how Impermanent your efforts are.</p>
-      </div>
-      <div class="actions">
-        <a class="reply">Reply</a>
-      </div>
-    </div>
-  </div>
-  <form class="ui reply form">
-    <div class="field">
-      <textarea></textarea>
-    </div>
-    <div class="ui primary submit labeled icon button">
-      <i class="icon edit"></i> Add Comment
-    </div>
-  </form>
+	{% for review_dict in reviews %}
+	<div class="comment">
+		<div class="content">
+		  <a class="author">{{ review_dict["person_name"] }}</a>
+		  <div class="metadata">
+		  		<div class="date">{{ review_dict["date"] }}</div>
+		  </div>
+		  <div class="ui medium star rating" data-rating="{{review_dict['rate']}}" data-max-rating="5">
+		  </div>
+		  <div class="text">
+		  	<p>{{ review_dict["comment"] }}</p>
+		  </div>
+		  <div class="actions">
+		    <a class="reply">Reply</a>
+		  </div>
+		  <br><br>
+		</div>
+	</div>
+	{% endfor %}
+	<h3 class="ui teal dividing large header">
+		Leave Your Review Here!
+	</h3>
+	<br>
+	<form class="ui reply form" method="POST" action="add_review">
+		<h3 class="ui yellow header">
+			Rate For This Place
+		</h3>
+		<div class="ui huge star rating" data-rating="0" data-max-rating="5">
+		</div>
+		<input id="star_val" style="display: none;" name="rate" value=""></input>
+		<br><br>
+		<textarea class="field" name="comment"></textarea>
+		<button class="ui primary submit labeled icon button">
+		 	<i class="icon edit"></i> 
+		 		Add Review! 
+		</button>
+		<input style="display: none;" name="restaurant_id" value="{{reviews[0]['id']}}"></input>
+	</form>
 </div>
 </article>
 

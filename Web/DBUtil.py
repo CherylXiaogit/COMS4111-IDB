@@ -146,17 +146,24 @@ GROUP BY Restaurant_id
 ORDER BY AVG(rate) DESC;
 '''
 
-FIND_RESTAURANT_WITH_REVIEW_INFO_BY_ID = 									   \
+FIND_RESTAURANT_WITH_REVIEW_BY_ID = 									   	   \
 '''
-SELECT 
+SELECT restaurant_id, restaurant_name, addr, person_name, rate, comment, date
 FROM
-Review INNER JOIN Person USING(Person_id)
-WHERE restaurant_id = %s
+(Review INNER JOIN (SELECT Person_id, Name as Person_name FROM Person) 
+AS P1 USING(Person_id) ) AS T1
+INNER JOIN 
+(SELECT Restaurant_id, Name as Restaurant_name, Addr as addr FROM Restaurant) 
+AS R1 USING(Restaurant_id)
+WHERE Restaurant_id = %s
 ORDER BY date DESC;
 '''
 
-
-
+ADD_REVIEW_SQL = 															   \
+'''
+INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) 
+VALUES (%s, %s, %s, %s, %s);
+'''
 
 def get_first_result(cursor):
 	data = None
