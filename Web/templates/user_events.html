@@ -19,7 +19,9 @@
     <tr>
       <td>
         <h2 class="ui center aligned header">
-        	{{ event_dict["name"] }}
+        	<a href="/event?event_id={{event_dict['id']}}">
+              {{ event_dict["name"] }}
+          </a>
         </h2>
       </td>
       <td class="left aligned">
@@ -52,7 +54,9 @@
     <tr>
       <td>
         <h2 class="ui center aligned header">
-        	{{ event_dict["name"] }}
+          <a href="/event?event_id={{event_dict['id']}}">
+        	   {{ event_dict["name"] }}
+           </a>
         </h2>
       </td>
       <td class="left aligned">

@@ -37,6 +37,24 @@ GROUP BY Event_id, Name, Description, EDate, ETime
 ORDER BY EDate DESC;
 '''
 
+FIND_EVENTS_USER_NOT_IN_SQL = 												   \
+'''
+SELECT *
+FROM Event 
+WHERE Event_id NOT IN (
+    (
+	    SELECT Event_id
+	    FROM Own
+	    WHERE Person_id = %s
+    ) UNION (
+	    SELECT Event_id
+	    FROM PJoinE
+	    WHERE Person_id = %s
+    ) 
+);
+
+'''
+
 CREATE_EVENT_SQL = 															   \
 '''
 INSERT INTO Event (Name, Description, EDate, ETime) VALUES (%s, %s, %s, %s);

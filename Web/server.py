@@ -40,7 +40,8 @@ from DBUtil import DATABASEURI, FIND_USER_OWN_EVENTS_SQL,                      \
                     FIND_ALL_FEATURES_SQL, FIND_ALL_REGION_ID_ZIPCODE_SQL,     \
                     FIND_RESTAURANT_BY_ZIPCODE, FIND_RESTAURANT_BY_FEATURE,    \
                     FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE,                    \
-                    FIND_RESTAURANT_WITH_REVIEW_BY_ID, ADD_REVIEW_SQL
+                    FIND_RESTAURANT_WITH_REVIEW_BY_ID, ADD_REVIEW_SQL,         \
+                    FIND_EVENTS_USER_NOT_IN_SQL
 
 from WebUtil import set_cookie_redirct, delete_existing_user_cookie
 
@@ -51,17 +52,6 @@ app = Flask(__name__)
 #
 
 engine = create_engine(DATABASEURI)
-
-#
-# Example of running queries in your database
-# Note that this will probably not work if you already have a table named 'test' in your database, containing meaningful data. This is only an example showing you how to run queries in your database using SQLAlchemy.
-#
-# engine.execute("""CREATE TABLE IF NOT EXISTS test (
-#   id serial,
-#   name text
-# );""")
-# engine.execute("""INSERT INTO test(name) VALUES ('grace hopper'), ('alan turing'), ('ada lovelace');""")
-#
 
 @app.before_request
 def before_request():
@@ -174,7 +164,8 @@ def signup():
 '''
 Restaurant Part:
 - restaurant
-- 
+- find_restaurants
+- add_review
 '''
 
 def collect_features(feature_tuples):
@@ -187,7 +178,7 @@ def collect_reviews(review_tuples):
     return [{'id': review[0], 'restaurant_name': review[1],                    \
             'addr': review[2], 'person_name': review[3],                       \
             'rate': int(review[4]), 'comment': review[5],                      \
-            'date': review[6], }                                                 \
+            'date': review[6], }                                               \
             for review in review_tuples]
 
 @app.route('/restaurant')
@@ -243,7 +234,6 @@ def find_restaurants():
         restaurants = collect_restaurants(results)
         return render_template("restaurant_results.html", restaurants=restaurants)
 
-    
 '''
 Event Part:
 - event
@@ -251,17 +241,25 @@ Event Part:
     - without event_id
 - create_event
 - join_event
-
 '''
 
 def collect_events(event_tuples):
-    return [{'id':  event[0],                                                  \
-             'name': event[1],                                                 \
-             'desc': event[2],                                                 \
-             'time': datetime.combine(event[3], event[4])                      \
-                             .strftime("%Y-%m-%d %H:%M:%S"),                   \
-             'number': event[5]}                                               \
-             for event in event_tuples]
+    if len(event_tuples[0]) == 6:
+        return [{'id':  event[0],                                                  \
+                 'name': event[1],                                                 \
+                 'desc': event[2],                                                 \
+                 'time': datetime.combine(event[3], event[4])                      \
+                                 .strftime("%Y-%m-%d %H:%M:%S"),                   \
+                 'number': event[5]}                                               \
+                 for event in event_tuples]
+    else:
+        return [{'id':  event[0],                                                  \
+                 'name': event[1],                                                 \
+                 'desc': event[2],                                                 \
+                 'time': datetime.combine(event[3], event[4])                      \
+                                 .strftime("%Y-%m-%d %H:%M:%S")}                   \
+                 for event in event_tuples]
+
 
 @app.route('/event')
 def event():
@@ -296,6 +294,14 @@ def create_event():
         g.conn.execute(CREATE_EVENT_SQL, event_params)
         g.conn.execute(CREATE_OWN_SQL, request.cookies.get("user_id"))
         return redirect("/event")
+
+@app.route('/browse_event')
+def browse_event():
+    user_id = request.cookies.get("user_id")
+    cursor = g.conn.execute(FIND_EVENTS_USER_NOT_IN_SQL, (user_id, user_id))
+    results = get_results(cursor)
+    events = collect_events(results)
+    return render_template("other_events.html", events=events)
 
 @app.route('/join_event', methods=["POST"])
 def join_event():
