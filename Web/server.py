@@ -244,21 +244,23 @@ Event Part:
 '''
 
 def collect_events(event_tuples):
-    if len(event_tuples[0]) == 6:
-        return [{'id':  event[0],                                                  \
-                 'name': event[1],                                                 \
-                 'desc': event[2],                                                 \
-                 'time': datetime.combine(event[3], event[4])                      \
-                                 .strftime("%Y-%m-%d %H:%M:%S"),                   \
-                 'number': event[5]}                                               \
-                 for event in event_tuples]
-    else:
-        return [{'id':  event[0],                                                  \
-                 'name': event[1],                                                 \
-                 'desc': event[2],                                                 \
-                 'time': datetime.combine(event[3], event[4])                      \
-                                 .strftime("%Y-%m-%d %H:%M:%S")}                   \
-                 for event in event_tuples]
+    if event_tuples:
+        if len(event_tuples[0]) == 6:
+            return [{'id':  event[0],                                                  \
+                     'name': event[1],                                                 \
+                     'desc': event[2],                                                 \
+                     'time': datetime.combine(event[3], event[4])                      \
+                                     .strftime("%Y-%m-%d %H:%M:%S"),                   \
+                     'number': event[5]}                                               \
+                     for event in event_tuples]
+        else:
+            return [{'id':  event[0],                                                  \
+                     'name': event[1],                                                 \
+                     'desc': event[2],                                                 \
+                     'time': datetime.combine(event[3], event[4])                      \
+                                     .strftime("%Y-%m-%d %H:%M:%S")}                   \
+                     for event in event_tuples]
+    return event_tuples
 
 
 @app.route('/event')

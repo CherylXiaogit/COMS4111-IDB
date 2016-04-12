@@ -62,7 +62,7 @@ def randomDate(start, end, prop):
 
 def export_review_sql():
     with open("sql/review.sql", "wb+") as review_sql:
-        for _ in xrange(10000):
+        for _ in xrange(50000):
             person_id = str(random.choice(xrange(1, 2001)))
             restaurant_id = str(random.choice(xrange(0, 20324)))
             comment = "'Hmmmm'"
