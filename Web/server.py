@@ -41,7 +41,8 @@ from DBUtil import DATABASEURI, FIND_USER_OWN_EVENTS_SQL,                      \
                     FIND_RESTAURANT_BY_ZIPCODE, FIND_RESTAURANT_BY_FEATURE,    \
                     FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE,                    \
                     FIND_RESTAURANT_WITH_REVIEW_BY_ID, ADD_REVIEW_SQL,         \
-                    FIND_EVENTS_USER_NOT_IN_SQL
+                    FIND_EVENTS_USER_NOT_IN_SQL,                               \
+                    FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL
 
 from WebUtil import set_cookie_redirct, delete_existing_user_cookie
 
@@ -56,7 +57,7 @@ engine = create_engine(DATABASEURI)
 @app.before_request
 def before_request():
     """
-    This function is run at the beginning of every web request 
+    This function is run at the beginning of every web request
     (every time you enter an address in the web browser).
     We use it to setup a database connection that can be used throughout the request.
 
@@ -89,7 +90,7 @@ def teardown_request(exception):
 #       @app.route("/foobar/", methods=["POST", "GET"])
 #
 # PROTIP: (the trailing / in the path is important)
-# 
+#
 # see for routing: http://flask.pocoo.org/docs/0.10/quickstart/#routing
 # see for decorators: http://simeonfranklin.com/blog/2012/jul/1/python-decorators-in-12-steps/
 #
@@ -134,16 +135,22 @@ def login():
         else:
             # TODO(Chris): Handle the not found case error message
             print "No such user!"
-            return render_template("sign_up.html")
+            region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL)
+            region_tuples = get_results(region_cursor)
+            regions = collect_regions(region_tuples)
+            return render_template("sign_up.html", regions=regions)
 
 @app.route('/sign_up', methods=["POST", "GET"])
 def signup():
     try:
+        region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL)
+        region_tuples = get_results(region_cursor)
+        regions = collect_regions(region_tuples)
         if request.method == "GET":
-            return render_template("sign_up.html")
+            return render_template("sign_up.html", regions=regions)
         else: # POST
             params = (request.form["username"], request.form["email"],             \
-                        request.form["age"], request.form["gender"])
+                        request.form["age"], request.form["gender"], request.form["zipcode"])
             g.conn.execute(SIGNUP_USER_SQL, params)
             cursor = g.conn.execute(GET_LAST_USER_ID_SQL)
             result = get_first_result(cursor)
@@ -155,10 +162,10 @@ def signup():
                 resp.set_cookie('user_id', str(result[0]))
                 return resp
             else:
-                # TODO(Chris): Handle the error format for signup, 
+                # TODO(Chris): Handle the error format for signup,
                 # ex. enter age with not numbers or some db callback
                 print "Something happens in DB"
-                return render_template("sign_up.html")
+                return render_template("sign_up.html", regions=regions)
     except:
         return redirect("/")
 '''
