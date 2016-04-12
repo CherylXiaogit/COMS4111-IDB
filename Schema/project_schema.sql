@@ -187,6 +187,7 @@ CREATE TABLE Recommend
     Recommend_id SERIAL,
     Feature_id INTEGER NOT NULL,
     Restaurant_id INTEGER NOT NULL,
+    UNIQUE (Feature_id, Restaurant_id),
     PRIMARY KEY(Recommend_id),
     FOREIGN KEY (Restaurant_id) REFERENCES Restaurant ON DELETE CASCADE,
     FOREIGN KEY (Feature_id) REFERENCES Feature ON DELETE CASCADE
@@ -198,6 +199,7 @@ CREATE TABLE Special_for
     Special_id SERIAL,
     Feature_id INTEGER NOT NULL,
     Restaurant_id INTEGER NOT NULL,
+    UNIQUE (Feature_id, Restaurant_id),
     PRIMARY KEY(Special_id),
     FOREIGN KEY (Restaurant_id) REFERENCES Restaurant ON DELETE CASCADE,
     FOREIGN KEY (Feature_id) REFERENCES Feature ON DELETE CASCADE
