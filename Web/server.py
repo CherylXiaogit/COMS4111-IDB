@@ -221,7 +221,8 @@ def add_review():
 def collect_restaurants(restaurant_tuples):
     return [{'id': restaurant[0], 'name': restaurant[1],                       \
             'addr': restaurant[2], 'location': restaurant[4],                  \
-            'rate': round(restaurant[5], 2), 'star': int(restaurant[5])}       \
+            'rate': round(restaurant[5], 2), 'star': int(restaurant[5]),       \
+            'rcount': restaurant[6]}                                           \
             for restaurant in restaurant_tuples]
 
 @app.route('/find_restaurants', methods=["POST"])
@@ -232,7 +233,7 @@ def find_restaurants():
         return redirect("/restaurant")
     else:
         if zipcode and feature_id:
-            cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE, zipcode)
+            cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE, (feature_id, zipcode))
         elif feature_id:
             cursor = g.conn.execute(FIND_RESTAURANT_BY_FEATURE, feature_id)
         else:

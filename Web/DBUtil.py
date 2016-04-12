@@ -114,7 +114,7 @@ SELECT * from review where Restaurant_id = 10 order by date DESC;
 
 FIND_RESTAURANT_BY_ZIPCODE = 												   \
 '''
-SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
 FROM
     (
         (
@@ -124,14 +124,14 @@ FROM
                 WHERE Zip_code = %s
             ) AS R INNER JOIN Belong_to USING (Region_id)
         ) INNER JOIN Restaurant USING (Restaurant_id)
-    ) INNTER JOIN Review USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
 GROUP BY Restaurant_id
-ORDER BY AVG(rate) DESC;
+ORDER BY AVG(rate) DESC NULLS LAST;
 '''
 
 FIND_RESTAURANT_BY_FEATURE = 												   \
 '''
-SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
 FROM
         (
             (
@@ -139,14 +139,14 @@ FROM
                 FROM Special_for
                 WHERE Feature_id = %s
             ) AS R INNER JOIN Restaurant USING (Restaurant_id)
-        ) INNTER JOIN Review USING (Restaurant_id)
+        ) LEFT OUTER JOIN Review USING (Restaurant_id)
 GROUP BY Restaurant_id
-ORDER BY AVG(rate) DESC;
+ORDER BY AVG(rate) DESC NULLS LAST;
 '''
 
 FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE = 									   \
 '''
-SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
 FROM
     (
         (
@@ -164,9 +164,9 @@ FROM
                 ) AS R INNER JOIN Belong_to USING (Region_id)
             ) INNER JOIN Restaurant USING (Restaurant_id)
         ) USING (Restaurant_id)
-    ) INNTER JOIN Review USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
 GROUP BY Restaurant_id
-ORDER BY AVG(rate) DESC;
+ORDER BY AVG(rate) DESC NULLS LAST;
 '''
 
 FIND_RESTAURANT_WITH_REVIEW_BY_ID = 									   	   \
