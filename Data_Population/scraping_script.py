@@ -70,7 +70,7 @@ def export_review_sql():
             star = str(random.choice(xrange(1, 6)))
 
             review_str = ', '.join([restaurant_id, person_id, comment, date, star])
-            review_sql_str = "INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (" + review_str + ");\n"
+            review_sql_str = "INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (" + review_str + ");\n"
 
             review_sql.write(review_sql_str)
 
