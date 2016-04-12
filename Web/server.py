@@ -42,7 +42,8 @@ from DBUtil import DATABASEURI, FIND_USER_OWN_EVENTS_SQL,                      \
                     FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE,                    \
                     FIND_RESTAURANT_WITH_REVIEW_BY_ID, ADD_REVIEW_SQL,         \
                     FIND_EVENTS_USER_NOT_IN_SQL,                               \
-                    FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL
+                    FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL,                     \
+                    FIND_RESTAURANT_BY_RESTAURANT_ID
 
 from WebUtil import set_cookie_redirct, delete_existing_user_cookie
 
@@ -196,7 +197,11 @@ def restaurant():
                                                     restaurant_id)
         results = get_results(cursor)
         reviews = collect_reviews(results)
-        return render_template("restaurant_review.html", reviews=reviews)
+
+        rest_cursor = g.conn.execute(FIND_RESTAURANT_BY_RESTAURANT_ID, restaurant_id)
+        rest_results = get_results(rest_cursor)
+        rest = collect_restaurants(rest_results)
+        return render_template("restaurant_review.html", reviews=reviews, restaurants=rest)
     else:
         feature_cursor = g.conn.execute(FIND_ALL_FEATURES_SQL)
         region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SQL)

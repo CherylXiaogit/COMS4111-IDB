@@ -24,10 +24,10 @@
 
 <article>
 <h2 class="ui huge teal header">
-	{{ reviews[0]["restaurant_name"] }}
+    {{ restaurants[0]["name"] }}
 </h2>
 <h3 class="ui medium header">
-	{{ reviews[0]["addr"] }}
+    {{ restaurants[0]["addr"] }}
 </h3>
 <div class="ui comments">
 	{% for review_dict in reviews %}
@@ -66,7 +66,7 @@
 		 	<i class="icon edit"></i> 
 		 		Add Review! 
 		</button>
-		<input style="display: none;" name="restaurant_id" value="{{reviews[0]['id']}}"></input>
+		<input style="display: none;" name="restaurant_id" value="{{ restaurants[0]["id"] }}"></input>
 	</form>
 </div>
 </article>

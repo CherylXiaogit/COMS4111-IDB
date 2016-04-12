@@ -91,7 +91,15 @@ FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL = 								        \
 SELECT region_id, zip_code FROM region order by zip_code;
 '''
 
-FIND_RESTAURANT_BY_RESTAURANT_ID = 											   \
+FIND_RESTAURANT_BY_RESTAURANT_ID =                                          \
+'''
+SELECT Restaurant_id, Name, Addr, Url, Location, count(*) as dum1, count(*) as dum2
+FROM Restaurant
+WHERE Restaurant_id = %s
+GROUP BY Restaurant_id
+'''
+
+FIND_RESTAURANT_BY_REGION_ID = 											   \
 '''
 SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
 FROM
@@ -108,7 +116,7 @@ ORDER BY AVG(rate) DESC;
 
 FIND_REVIEWS_BY_RESTAURANT_ID = 											   \
 '''
-SELECT * from review where Restaurant_id = 10 order by date DESC;
+SELECT * from review where Restaurant_id = %s order by date DESC;
 
 '''
 
