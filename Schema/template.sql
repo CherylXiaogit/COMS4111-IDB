@@ -273,3 +273,43 @@ WHERE Event_id NOT IN (
     WHERE Person_id = 2
     ) 
 );
+
+/* Find Restaurant with feature_id and event_id (Recommendation), ordered by rating */
+
+SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+FROM
+    (
+        (
+            SELECT *
+            FROM Special_for
+            WHERE Feature_id = 3
+        ) AS F
+        INNER JOIN
+        (
+            (
+                (
+                    SELECT *
+                    FROM Region
+                    WHERE Zip_code = (select zip_code from ((select * from pjoine where event_id = 1) p1 inner join    person using(person_id)) group  by zip_code order by count(*) DESC LIMIT 1)
+                ) AS R INNER JOIN Belong_to USING (Region_id)
+            ) INNER JOIN Restaurant USING (Restaurant_id)
+        ) USING (Restaurant_id)
+    ) INNTER JOIN Review USING (Restaurant_id)
+GROUP BY Restaurant_id
+ORDER BY AVG(rate) DESC;
+
+/* Find Restaurant with event_id (Recommendation), ordered by rating */
+
+SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+FROM
+    (
+        (
+            (
+                SELECT *
+                FROM Region
+                WHERE Zip_code = (select zip_code from ((select * from pjoine where event_id = 1) p1 inner join person using(person_id)) group  by zip_code order by count(*) DESC LIMIT 1)
+            ) AS R INNER JOIN Belong_to USING (Region_id)
+        ) INNER JOIN Restaurant USING (Restaurant_id)
+    ) INNTER JOIN Review USING (Restaurant_id)
+GROUP BY Restaurant_id
+ORDER BY AVG(rate) DESC;
