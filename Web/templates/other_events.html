@@ -1,0 +1,38 @@
+{% extends "layout.html" %}
+{% block body %} 
+
+<article>
+<h2 class="ui header">
+  Event May Like
+</h2>
+<table class="ui celled padded table">
+  <thead>
+    <tr>
+    <th class="single line">Event Name</th>
+    <th>Description</th>
+    <th>Time</th>
+  	</tr>
+  </thead>
+  <tbody>
+    {% for event_dict in events %}
+    <tr>
+      <td>
+        <h2 class="ui center aligned header">
+        	<a href="/event?event_id={{event_dict['id']}}">
+            {{ event_dict["name"] }}
+          </a>
+        </h2>
+      </td>
+      <td class="left aligned">
+      		{{ event_dict["desc"] }}
+      </td>
+      <td class="single line">
+      	   {{ event_dict["time"] }}
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+</article>
+
+{% endblock %}

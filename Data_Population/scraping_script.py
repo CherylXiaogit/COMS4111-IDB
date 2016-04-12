@@ -62,7 +62,7 @@ def randomDate(start, end, prop):
 
 def export_review_sql():
     with open("sql/review.sql", "wb+") as review_sql:
-        for _ in xrange(10000):
+        for _ in xrange(50000):
             person_id = str(random.choice(xrange(1, 2001)))
             restaurant_id = str(random.choice(xrange(0, 20324)))
             comment = "'Hmmmm'"
@@ -70,9 +70,19 @@ def export_review_sql():
             star = str(random.choice(xrange(1, 6)))
 
             review_str = ', '.join([restaurant_id, person_id, comment, date, star])
-            review_sql_str = "INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (" + review_str + ");\n"
+            review_sql_str = "INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (" + review_str + ");\n"
 
             review_sql.write(review_sql_str)
+
+def export_special_for_sql():
+    with open("sql/special_for.sql", "wb+") as special_sql:
+        for _ in xrange(10000):
+            feature_id = str(random.choice(xrange(1, 11)))
+            restaurant_id = str(random.choice(xrange(0, 20324)))
+
+            special_str = ', '.join([feature_id, restaurant_id])
+            special_sql_str = "INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (" + special_str + ");\n"
+            special_sql.write(special_sql_str)
 
 def export_restaurant_sql(data_dicts):
     with open("sql/restaurant.sql", "wb+") as restaurant_sql:
@@ -155,5 +165,6 @@ if __name__ == "__main__":
     # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
     # export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
     # export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
-    export_review_sql()
+    # export_review_sql()
+    export_special_for_sql()
 

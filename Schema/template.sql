@@ -8,7 +8,7 @@ FROM
         (
             SELECT * 
             FROM Belong_to
-            WHERE Region_id = 8
+            WHERE Region_id = 21
         ) AS R INNER JOIN Restaurant USING (Restaurant_id)
     ) INNTER JOIN Review USING (Restaurant_id) 
 GROUP BY Restaurant_id
@@ -189,7 +189,7 @@ GROUP BY Restaurant_id
 ORDER BY AVG(rate) DESC;
 
 /* Add Review */
-INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (6239, 1147, 'Hmmmm', '07/02/2015', 2);
+INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (6239, 1147, 'Hmmmm', '07/02/2015', 2);
 
 /* Find Review by Person Id, order by date */
 SELECT * 

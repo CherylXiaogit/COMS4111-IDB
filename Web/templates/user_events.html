@@ -19,7 +19,9 @@
     <tr>
       <td>
         <h2 class="ui center aligned header">
-        	{{ event_dict["name"] }}
+        	<a href="/event?event_id={{event_dict['id']}}">
+              {{ event_dict["name"] }}
+          </a>
         </h2>
       </td>
       <td class="left aligned">
@@ -52,7 +54,9 @@
     <tr>
       <td>
         <h2 class="ui center aligned header">
-        	{{ event_dict["name"] }}
+          <a href="/event?event_id={{event_dict['id']}}">
+        	   {{ event_dict["name"] }}
+           </a>
         </h2>
       </td>
       <td class="left aligned">
@@ -70,10 +74,16 @@
 </table>
 <br><br>
 <form action="/create_event" method="get">
-  <button class="ui primary button">
+  <button class="ui left floated large primary button">
     Create Event!
   </button>
 </form>
+<form action="/browse_event" method="get">
+  <button class="ui left floated large primary button">
+    See Other Events
+  </button>
+</form>
+
 <!-- TODO(Chris): Add Find some events to join (user doesn't join) 
                   button => link to all the events => choose event to join -->
 </article>
