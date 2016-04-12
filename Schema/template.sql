@@ -218,6 +218,9 @@ INSERT INTO Own (Event_id, Person_id) VALUES (1, 1);
 /* Add Person to join event */
 INSERT INTO PJoinE (Event_id, Person_id) VALUES (1, 1);
 
+/* Remove Person to join event */
+DELETE FROM PJoinE WHERE Event_id = 1 AND Person_id = 1;
+
 /* Find Event by admin's Person_id, show the events admined by the user */
 SELECT Event_id, Name, Description, EDate, ETime, COUNT(PJoinE.Person_id)
 FROM 
