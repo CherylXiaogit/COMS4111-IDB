@@ -74,6 +74,16 @@ def export_review_sql():
 
             review_sql.write(review_sql_str)
 
+def export_special_for_sql():
+    with open("sql/special_for.sql", "wb+") as special_sql:
+        for _ in xrange(10000):
+            feature_id = str(random.choice(xrange(1, 11)))
+            restaurant_id = str(random.choice(xrange(0, 20324)))
+
+            special_str = ', '.join([feature_id, restaurant_id])
+            special_sql_str = "INSERT INTO Special_for (Feature_id, Restaurant_id) VALUES (" + special_str + ");\n"
+            special_sql.write(special_sql_str)
+
 def export_restaurant_sql(data_dicts):
     with open("sql/restaurant.sql", "wb+") as restaurant_sql:
         restaurant_idx = 0
@@ -155,5 +165,6 @@ if __name__ == "__main__":
     # export_person_csv(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_user.json"))
     # export_restaurant_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
     # export_region_sql(yelp_json_dict_transformer("YelpDataset/yelp_academic_dataset_business.json"))
-    export_review_sql()
+    # export_review_sql()
+    export_special_for_sql()
 

@@ -8,7 +8,7 @@ FROM
         (
             SELECT * 
             FROM Belong_to
-            WHERE Region_id = 8
+            WHERE Region_id = 21
         ) AS R INNER JOIN Restaurant USING (Restaurant_id)
     ) INNTER JOIN Review USING (Restaurant_id) 
 GROUP BY Restaurant_id
