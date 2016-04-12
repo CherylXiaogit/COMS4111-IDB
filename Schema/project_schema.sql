@@ -24,6 +24,8 @@ CREATE TABLE Person
     CONSTRAINT valid_gender CHECK (Gender = 'male' OR Gender = 'female')
 );
 
+ALTER TABLE Person ADD COLUMN Zip_code CHAR(20) NOT NULL DEFAULT '15205'
+
 /* Good */
 /*
 INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Sean Malto', 'sm@columbia.edu', 'male', 24);
