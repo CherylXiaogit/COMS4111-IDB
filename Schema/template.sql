@@ -276,7 +276,7 @@ WHERE Event_id NOT IN (
 
 /* Find Restaurant with feature_id and event_id (Recommendation), ordered by rating */
 
-SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
 FROM
     (
         (
@@ -294,13 +294,13 @@ FROM
                 ) AS R INNER JOIN Belong_to USING (Region_id)
             ) INNER JOIN Restaurant USING (Restaurant_id)
         ) USING (Restaurant_id)
-    ) INNTER JOIN Review USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
 GROUP BY Restaurant_id
-ORDER BY AVG(rate) DESC;
+ORDER BY AVG(rate) DESC NULLS LAST;
 
 /* Find Restaurant with event_id (Recommendation), ordered by rating */
 
-SELECT Restaurant_id, Name, Addr, Url, Location, AVG(rate)
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
 FROM
     (
         (
@@ -310,6 +310,6 @@ FROM
                 WHERE Zip_code = (select zip_code from ((select * from pjoine where event_id = 1) p1 inner join person using(person_id)) group  by zip_code order by count(*) DESC LIMIT 1)
             ) AS R INNER JOIN Belong_to USING (Region_id)
         ) INNER JOIN Restaurant USING (Restaurant_id)
-    ) INNTER JOIN Review USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
 GROUP BY Restaurant_id
-ORDER BY AVG(rate) DESC;
+ORDER BY AVG(rate) DESC NULLS LAST;
