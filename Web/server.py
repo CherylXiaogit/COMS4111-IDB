@@ -279,7 +279,6 @@ def find_restaurants_api():
         restaurants = collect_restaurants(results)
     return jsonify({'restaurants': restaurants})
 
-
 '''
 Event Part:
 - event

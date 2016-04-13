@@ -9,6 +9,9 @@
         $('.ui.selection.dropdown')
           .dropdown()
         ;
+        // $('#search_button')
+        //   .click(search_restaurants())
+        // ;
     })
   ;
   function restore_default() {
@@ -18,7 +21,7 @@
       $("#rest_addr" + i).text("");
       $("#rest_rate" + i).text("");
       $("#rest_location" + i).text("");
-      $("#rest_star" + i).attr("data-rating", "");
+      $("#rest_star" + i).attr("data-rating", "0");
       $("#rest_rcount" + i).text("");  
     }
   }
@@ -33,7 +36,8 @@
     }).done(function(res) {
       console.log(res);
       if (res["restaurants"].length > 0) {
-          $("#recommend_restaurants").attr("style", "");
+          $("#recommend_restaurants").attr("style", "block");
+          $("#no_result_message").attr("style", "display: none;");
           for (var i = 0; i < res["restaurants"].length; i++) {
             $("#rest_name" + i).attr("href", "/restaurant?restaurant_id=" + res["restaurants"][i]["id"]);
             $("#rest_name" + i).text(res["restaurants"][i]["name"]);
@@ -47,6 +51,7 @@
       } else {
           restore_default();
           $("#recommend_restaurants").attr("style", "display: none;");
+          $("#no_result_message").attr("style", "display: block;");
       }
     });
   }
@@ -70,7 +75,7 @@
          </button>
     	</form>
     {% else %}
-      <form method="POST" action="javascript:search_restaurants()">
+      <form method="POST" action="javascript:search_restaurants()"> 
         <h2 class="ui teal header">
           Choose Feature
         </h2>
@@ -102,11 +107,14 @@
             </div>
         </div>
         <br><br><br>
-        <button class="ui massive teal submit button">
+        <button id="search_button" class="ui massive teal submit button">
           Search Restaurants!
         </button> 
       </form>
       <br><br><br>
+      <h4 id="no_result_message" class="ui teal header" style="display: none;">
+          Cannot find any restaurants around you. Try find more people to join.
+      </h4>
       <div id="recommend_restaurants" style="display: none;">
         <h2 class="ui teal header">
         Recommend Restaurants
