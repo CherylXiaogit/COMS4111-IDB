@@ -1,63 +1,39 @@
 {% extends "layout.html" %}
 {% block body %} 
 
-<script type="text/javascript">
-    $(document)
-      .ready(function() {
-        $('form')
-          .form({
-            fields: {
-              event_name: {
-                identifier  : 'event_name',
-                rules: [
-                  {
-                    type   : 'length[20]',
-                    prompt : 'Your event_name must be under 20 characters'
-                  }
-                ]
-              }
-            }
-          })
-        ;
-      })
-    ;
-</script>
-
 <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
 <link href="static/bootstrap/css/bootstrap-datetimepicker.min.css" rel="stylesheet" media="screen">
-    <article>
-        <div class="container">
-            <fieldset>
-                <form method="POST" action="create_event" role="form" data-toggle="validator">
-                    <legend>Create Event</legend>
-                    <label class="control-label">Event Name</label>
-                    <div class="controls input-append" style="height: 30px;">
-                        <input size="16" type="text" data-maxlength="20" name="event_name" value="" style="height: 30px;">
-                        <div class="help-block">Maximum of 20 characters</div>
+<article>
+    <div class="container">
+        <fieldset>
+            <form method="POST" action="create_event" role="form" data-toggle="validator">
+                <legend>Create Event</legend>
+                <label class="control-label">Event Name</label>
+                <div class="controls input-append" style="height: 30px;">
+                    <input size="16" type="text" maxlength="20" name="event_name" value="" style="height: 30px;">
+                </div>
+                <br><br>
+                <div class="control-group">
+                    <label class="control-label">Event Time</label>
+                    <div class="controls input-append date form_datetime" style="height: 30px;" data-date="" data-date-format="mm/dd/yyyy - hh:ii" data-link-field="dtp_input1">
+                        <input size="16" type="text" name="event_time" value="" style="height: 30px;" readonly>
+                        <span class="add-on" style="height: 30px;"><i class="icon-remove"></i></span>
+                        <span class="add-on" style="height: 30px;"><i class="icon-th"></i></span>
                     </div>
-                    <br><br>
-                    <div class="control-group">
-                        <label class="control-label">Event Time</label>
-                        <div class="controls input-append date form_datetime" style="height: 30px;" data-date="" data-date-format="mm/dd/yyyy - hh:ii" data-link-field="dtp_input1">
-                            <input size="16" type="text" name="event_time" value="" style="height: 30px;" readonly>
-                            <span class="add-on" style="height: 30px;"><i class="icon-remove"></i></span>
-                            <span class="add-on" style="height: 30px;"><i class="icon-th"></i></span>
-                        </div>
-                        <input type="hidden" id="dtp_input1" value="" /><br/>
-                    </div>
-                    <label class="control-label">Event Desciption</label>
-                    <div class="controls input-append">
-        	            <textarea size="16" name="event_desc" class="field span8" rows="10"></textarea>
-                    </div>
-                    <br><br>
-                	<button class="large ui olive submit button">
-                        Create Event!
-                    </button>
-                </form>
-            </fieldset>
-        </div>
-    </article>
-
+                    <input type="hidden" id="dtp_input1" value="" /><br/>
+                </div>
+                <label class="control-label">Event Desciption</label>
+                <div class="controls input-append">
+    	            <textarea size="16" name="event_desc" class="field span8" rows="10"></textarea>
+                </div>
+                <br><br>
+            	<button class="large ui olive submit button">
+                    Create Event!
+                </button>
+            </form>
+        </fieldset>
+    </div>
+</article>
 <script type="text/javascript" src="static/jquery/jquery-1.8.3.min.js" charset="UTF-8"></script>
 <script type="text/javascript" src="static/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="static/bootstrap/js/validator.js"></script>
