@@ -8,18 +8,20 @@
         ;
     })
   ;
-  // $.ajax({
-  //   type: "POST",
-  //   url: "/get_sketches",
-  //   data: {
-  //     sketch: canvasData
-  //   }
-  // }).done(function(res) {
-  //   console.log(res);
-  //   for (var i = 0; i < res["sketches"].length; i++) {
-  //     $("#video-match-" + i + " > a > img").attr("src", res["sketches"][i]["img_url"]);
-  //   }
-  // });
+  function search_restaurants() { 
+    $.ajax({
+      type: "POST",
+      url: "/find_restaurants",
+      data: {
+        sketch: canvasData
+      }
+    }).done(function(res) {
+      console.log(res);
+      for (var i = 0; i < res["sketches"].length; i++) {
+        $("#video-match-" + i + " > a > img").attr("src", res["sketches"][i]["img_url"]);
+      }
+    });
+  }
 </script>
 <article>
 	<h2 class="ui dividing header">

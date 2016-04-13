@@ -195,14 +195,16 @@ def restaurant():
     restaurant_id = request.args.get('restaurant_id')
     if restaurant_id:
         cursor = g.conn.execute(FIND_RESTAURANT_WITH_REVIEW_BY_ID,             \
-                                                    restaurant_id)
+                                                        restaurant_id)
         results = get_results(cursor)
         reviews = collect_reviews(results)
 
-        rest_cursor = g.conn.execute(FIND_RESTAURANT_BY_RESTAURANT_ID, restaurant_id)
+        rest_cursor = g.conn.execute(FIND_RESTAURANT_BY_RESTAURANT_ID,         \
+                                        restaurant_id)
         rest_results = get_results(rest_cursor)
         rest = collect_restaurants(rest_results)
-        return render_template("restaurant_review.html", reviews=reviews, restaurants=rest)
+        return render_template("restaurant_review.html", reviews=reviews,      \
+                                                            restaurants=rest)
     else:
         feature_cursor = g.conn.execute(FIND_ALL_FEATURES_SQL)
         region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SQL)
