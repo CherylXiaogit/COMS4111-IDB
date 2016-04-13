@@ -22,6 +22,7 @@ import os
 from datetime import datetime
 from flask import Flask
 from flask import g
+from flask import jsonify
 from flask import make_response
 from flask import redirect
 from flask import render_template
@@ -234,6 +235,7 @@ def collect_restaurants(restaurant_tuples):
             'rcount': restaurant[6]}                                           \
             for restaurant in restaurant_tuples]
 
+
 @app.route('/find_restaurants', methods=["POST"])
 def find_restaurants():
     zipcode = request.form["zipcode"]
@@ -250,6 +252,33 @@ def find_restaurants():
         results = get_results(cursor)
         restaurants = collect_restaurants(results)
         return render_template("restaurant_results.html", restaurants=restaurants)
+
+def limit_10_sql_formatter(sql):
+    return sql[:-2] + " LIMIT 10;"
+
+@app.route('/find_restaurants_api', methods=["POST"])
+def find_restaurants_api():
+    zipcode = request.form["zipcode"]
+    feature_id = request.form["feature_id"]
+    restaurants = []
+    if zipcode or feature_id:
+        if zipcode and feature_id:
+            cursor = g.conn.execute                                            \
+                        (limit_10_sql_formatter                                \
+                        (FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE),              \
+                        (feature_id, zipcode))
+        elif feature_id:
+            cursor = g.conn.execute                                            \
+                        (limit_10_sql_formatter(FIND_RESTAURANT_BY_FEATURE),   \
+                            feature_id)
+        else:
+            cursor = g.conn.execute                                            \
+                        (limit_10_sql_formatter(FIND_RESTAURANT_BY_ZIPCODE),   \
+                            zipcode)
+        results = get_results(cursor)
+        restaurants = collect_restaurants(results)
+    return jsonify({'restaurants': restaurants})
+
 
 '''
 Event Part:
@@ -284,6 +313,13 @@ def event():
     event_id = request.args.get("event_id")
     event_owner = request.args.get("event_owner")
     if event_id:
+        if event_owner:
+            feature_cursor = g.conn.execute(FIND_ALL_FEATURES_SQL)
+            region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SQL)
+            feature_tuples = get_results(feature_cursor)
+            region_tuples = get_results(region_cursor)
+            features = collect_features(feature_tuples)
+            regions = collect_regions(region_tuples)
         event_cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
         event = get_first_result(event_cursor)
         restaurant_cursor = g.conn.execute                                     \
@@ -293,7 +329,7 @@ def event():
                           datetime=datetime.combine(event[3], event[4])        \
                                             .strftime("%Y-%m-%d %H:%M:%S"),    \
                           event_id=event_id, event_owner=event_owner,          \
-                          restaurants=restaurants)
+                          features=features, regions=regions)
         return render_template("event.html", **event_dict)
     else:
         user_id = request.cookies.get("user_id")

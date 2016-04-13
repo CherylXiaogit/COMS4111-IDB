@@ -6,19 +6,47 @@
         $('.ui.star.rating')
           .rating('disable')
         ;
+        $('.ui.selection.dropdown')
+          .dropdown()
+        ;
     })
   ;
+  function restore_default() {
+    for (var i = 0; i < 10; i++) {
+      $("#rest_name" + i).attr("href", "");
+      $("#rest_name" + i).text("");
+      $("#rest_addr" + i).text("");
+      $("#rest_rate" + i).text("");
+      $("#rest_location" + i).text("");
+      $("#rest_star" + i).attr("data-rating", "");
+      $("#rest_rcount" + i).text("");  
+    }
+  }
   function search_restaurants() { 
     $.ajax({
       type: "POST",
       url: "/find_restaurants_api",
       data: {
-        feature_id: canvasData
+        feature_id: $("#feature_id").val(),
+        zipcode: $("#zipcode").val()
       }
     }).done(function(res) {
       console.log(res);
-      for (var i = 0; i < res["sketches"].length; i++) {
-        $("#video-match-" + i + " > a > img").attr("src", res["sketches"][i]["img_url"]);
+      if (res["restaurants"].length > 0) {
+          $("#recommend_restaurants").attr("style", "");
+          for (var i = 0; i < res["restaurants"].length; i++) {
+            $("#rest_name" + i).attr("href", "/restaurant?restaurant_id=" + res["restaurants"][i]["id"]);
+            $("#rest_name" + i).text(res["restaurants"][i]["name"]);
+            $("#rest_addr" + i).text(res["restaurants"][i]["addr"]);
+            $("#rest_rate" + i).text(res["restaurants"][i]["rate"]);
+            $("#rest_location" + i).text(res["restaurants"][i]["location"]);
+            $("#rest_star" + i).attr("data-rating", res["restaurants"][i]["star"]);
+            $("#rest_rcount" + i).text(res["restaurants"][i]["rcount"]);  
+          }
+          $('.ui.star.rating').rating('disable');
+      } else {
+          restore_default();
+          $("#recommend_restaurants").attr("style", "display: none;");
       }
     });
   }
@@ -42,65 +70,16 @@
          </button>
     	</form>
     {% else %}
-      <br><br><br>
-      <h2 class="ui teal header">
-      Recommend Restaurants
-      </h2>
-
-        {% if restaurants|length == 0 %}
-            <h4 class="ui teal header">
-            Cannot find any restaurants around you. Try find more people to join.
-            </h4>
-        {% endif %}
-
-      <table class="ui teal celled padded table">
-        <thead>
-          <tr>
-          <th class="single line">Name</th>
-          <th>Address</th>
-          <th>Location</th>
-          <th>Rating</th>
-          <th>Reviews</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for restaurant_dict in restaurants %}
-          <tr>
-            <td>
-              <h2 class="ui center aligned header">
-                <a href="/restaurant?restaurant_id={{ restaurant_dict['id'] }}">
-                  {{ restaurant_dict["name"] }}
-                </a>
-              </h2>
-            </td>
-            <td class="left aligned">
-                {{ restaurant_dict["addr"] }}
-            </td>
-            <td class="single line">
-                 {{ restaurant_dict["location"] }}
-            </td>
-            <td>
-              <p>{{ restaurant_dict["rate"] }}</p>
-              <div class="ui large star rating" data-rating="{{restaurant_dict['star']}}" data-max-rating="5">
-              </div> 
-            </td>
-            <td class="single line">
-                {{ restaurant_dict["rcount"] }}
-            </td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-      <!-- <form method="POST" action="find_restaurants">
+      <form method="POST" action="javascript:search_restaurants()">
         <h2 class="ui teal header">
           Choose Feature
         </h2>
         <div class="ui teal selection dropdown">
-          <input type="hidden" name="feature_id">
+          <input type="hidden" id="feature_id" name="feature_id">
             <i class="dropdown icon"></i>
             <div class="default text">Udecided</div>
             <div class="menu">
-                {% for feature_dict in features %}
+              {% for feature_dict in features %}
                   <div class="item" data-value="{{feature_dict['id']}}">
                     {{feature_dict["name"]}}
                   </div>
@@ -111,22 +90,66 @@
           Choose Region
         </h2>
         <div class="ui teal selection dropdown">
-          <input type="hidden" name="zipcode">
+          <input type="hidden" id="zipcode" name="zipcode">
             <i class="dropdown icon"></i>
             <div class="default text">Udecided</div>
             <div class="menu">
-                {% for region_dict in regions %}
+              {% for region_dict in regions %}
                   <div class="item" data-value="{{region_dict['zipcode']}}">
                     {{region_dict["zipcode"]}}
                   </div>
-                {% endfor %}
+              {% endfor %}
             </div>
         </div>
         <br><br><br>
         <button class="ui massive teal submit button">
           Search Restaurants!
         </button> 
-      </form> -->
+      </form>
+      <br><br><br>
+      <div id="recommend_restaurants" style="display: none;">
+        <h2 class="ui teal header">
+        Recommend Restaurants
+        </h2>
+        <table class="ui teal celled padded table">
+          <thead>
+            <tr>
+            <th class="single line">Name</th>
+            <th>Address</th>
+            <th>Location</th>
+            <th>Rating</th>
+            <th>Reviews</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for idx in range(10) %}
+            <tr>
+              <td>
+                <h2 class="ui center aligned header">
+                  <a id="rest_name{{idx}}" href="">
+                    <!-- restaurant_dict["name"] -->
+                  </a>
+                </h2>
+              </td>
+              <td id="rest_addr{{idx}}" class="left aligned">
+                   <!-- restaurant_dict["addr"]  -->
+              </td>
+              <td id="rest_location{{idx}}" class="single line">
+                    <!-- restaurant_dict["location"]  -->
+              </td>
+              <td>
+                <p id="rest_rate{{idx}}"> <!-- restaurant_dict["rate"] --> </p>
+                <div id="rest_star{{idx}}" class="ui large star rating" data-rating="" data-max-rating="5">
+                </div> 
+              </td>
+              <td id="rest_rcount{{idx}}" class="single line">
+                   <!-- restaurant_dict["rcount"]  -->
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
     {% endif %}
 </article>
 
