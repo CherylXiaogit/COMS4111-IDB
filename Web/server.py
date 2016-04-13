@@ -223,7 +223,8 @@ def add_review():
     date = datetime.now().strftime("%Y-%m-%d")
     if not user_id:
         return redirect('/')
-    g.conn.execute(ADD_REVIEW_SQL, (restaurant_id, user_id, comment, date, rate))
+    if rate and comment:
+        g.conn.execute(ADD_REVIEW_SQL, (restaurant_id, user_id, comment, date, rate))
     return redirect(url_for("restaurant", restaurant_id=restaurant_id))
 
 def collect_restaurants(restaurant_tuples):
@@ -306,17 +307,20 @@ def event():
 
 @app.route('/create_event', methods=["GET", "POST"])
 def create_event():
-    if request.method == "GET":
-        return render_template("create_event.html")
-    else: # POST
-        event_date, event_time = request.form["event_time"].split(" - ")
-        event_params = request.form["event_name"],                             \
-                       request.form["event_desc"],                             \
-                       event_date, event_time
-        g.conn.execute(CREATE_EVENT_SQL, event_params)
-        g.conn.execute(CREATE_OWN_SQL, request.cookies.get("user_id"))
-        g.conn.execute(CREATE_JOIN_SQL, request.cookies.get("user_id"))
-        return redirect("/event")
+    try:
+        if request.method == "GET":
+            return render_template("create_event.html")
+        else: # POST
+            event_date, event_time = request.form["event_time"].split(" - ")
+            event_params = request.form["event_name"],                             \
+                           request.form["event_desc"],                             \
+                           event_date, event_time
+            g.conn.execute(CREATE_EVENT_SQL, event_params)
+            g.conn.execute(CREATE_OWN_SQL, request.cookies.get("user_id"))
+            g.conn.execute(CREATE_JOIN_SQL, request.cookies.get("user_id"))
+            return redirect("/event")
+    except:
+        return redirect("/")
 
 @app.route('/browse_event')
 def browse_event():
