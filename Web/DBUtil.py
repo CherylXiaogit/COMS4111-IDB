@@ -66,6 +66,12 @@ INSERT INTO Own (Event_id, Person_id) VALUES
 ((SELECT MAX(event_id) from Event), %s);
 '''
 
+CREATE_JOIN_SQL = 															   \
+'''
+INSERT INTO PJoinE (Event_id, Person_id) VALUES
+((SELECT MAX(event_id) from Event), %s);
+'''
+
 FIND_EVENT_WITH_ID_SQL = 													   \
 '''
 SELECT * FROM Event WHERE Event_id = %s
@@ -198,7 +204,7 @@ VALUES (%s, %s, %s, %s, %s);
 
 RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID =                                         \
 '''
-SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0) as rate, 
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0) as rate,
 count(Review_id)
 FROM
     (
@@ -206,9 +212,9 @@ FROM
             (
                 SELECT *
                 FROM Region
-                WHERE Zip_code = (select zip_code from 
-                ((select * from pjoine where event_id = 1)
-                p1 inner join person using(person_id)) group 
+                WHERE Zip_code = (select zip_code from
+                ((select * from pjoine where event_id = %s)
+                p1 inner join person using(person_id)) group
                 by zip_code order by count(*) DESC LIMIT 1)
             ) AS R INNER JOIN Belong_to USING (Region_id)
         ) INNER JOIN Restaurant USING (Restaurant_id)

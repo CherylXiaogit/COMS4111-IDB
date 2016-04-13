@@ -44,7 +44,7 @@ from DBUtil import DATABASEURI, FIND_USER_OWN_EVENTS_SQL,                      \
                     FIND_EVENTS_USER_NOT_IN_SQL,                               \
                     FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL,                     \
                     FIND_RESTAURANT_BY_RESTAURANT_ID,                          \
-                    RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID
+                    RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID, CREATE_JOIN_SQL
 
 from WebUtil import set_cookie_redirct, delete_existing_user_cookie
 
@@ -313,6 +313,7 @@ def create_event():
                        event_date, event_time
         g.conn.execute(CREATE_EVENT_SQL, event_params)
         g.conn.execute(CREATE_OWN_SQL, request.cookies.get("user_id"))
+        g.conn.execute(CREATE_JOIN_SQL, request.cookies.get("user_id"))
         return redirect("/event")
 
 @app.route('/browse_event')
