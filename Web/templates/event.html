@@ -46,6 +46,13 @@
       <h2 class="ui teal header">
       Recommend Restaurants
       </h2>
+
+        {% if restaurants|length == 0 %}
+            <h4 class="ui teal header">
+            Cannot find any restaurants around you. Try find more people to join.
+            </h4>
+        {% endif %}
+
       <table class="ui teal celled padded table">
         <thead>
           <tr>
