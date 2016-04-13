@@ -1,6 +1,13 @@
 {% extends "layout.html" %}
 {% block body %} 
 <script type="text/javascript">
+  $(document)
+    .ready(function() {
+        $('.ui.star.rating')
+          .rating('disable')
+        ;
+    })
+  ;
   // $.ajax({
   //   type: "POST",
   //   url: "/get_sketches",
@@ -34,11 +41,48 @@
     	</form>
     {% else %}
       <br><br><br>
-      <h2 class="ui teal dividing header">
-        Recommend Some Restaurants
+      <h2 class="ui teal header">
+      Recommend Restaurants
       </h2>
-      <br><br>
-      <form method="POST" action="find_restaurants">
+      <table class="ui teal celled padded table">
+        <thead>
+          <tr>
+          <th class="single line">Name</th>
+          <th>Address</th>
+          <th>Location</th>
+          <th>Rating</th>
+          <th>Reviews</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for restaurant_dict in restaurants %}
+          <tr>
+            <td>
+              <h2 class="ui center aligned header">
+                <a href="/restaurant?restaurant_id={{ restaurant_dict['id'] }}">
+                  {{ restaurant_dict["name"] }}
+                </a>
+              </h2>
+            </td>
+            <td class="left aligned">
+                {{ restaurant_dict["addr"] }}
+            </td>
+            <td class="single line">
+                 {{ restaurant_dict["location"] }}
+            </td>
+            <td>
+              <p>{{ restaurant_dict["rate"] }}</p>
+              <div class="ui large star rating" data-rating="{{restaurant_dict['star']}}" data-max-rating="5">
+              </div> 
+            </td>
+            <td class="single line">
+                {{ restaurant_dict["rcount"] }}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      <!-- <form method="POST" action="find_restaurants">
         <h2 class="ui teal header">
           Choose Feature
         </h2>
@@ -73,7 +117,7 @@
         <button class="ui massive teal submit button">
           Search Restaurants!
         </button> 
-      </form>
+      </form> -->
     {% endif %}
 </article>
 

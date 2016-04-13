@@ -43,7 +43,8 @@ from DBUtil import DATABASEURI, FIND_USER_OWN_EVENTS_SQL,                      \
                     FIND_RESTAURANT_WITH_REVIEW_BY_ID, ADD_REVIEW_SQL,         \
                     FIND_EVENTS_USER_NOT_IN_SQL,                               \
                     FIND_ALL_REGION_ID_ZIPCODE_SORTED_SQL,                     \
-                    FIND_RESTAURANT_BY_RESTAURANT_ID
+                    FIND_RESTAURANT_BY_RESTAURANT_ID,                          \
+                    RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID
 
 from WebUtil import set_cookie_redirct, delete_existing_user_cookie
 
@@ -275,18 +276,21 @@ def collect_events(event_tuples):
                      for event in event_tuples]
     return event_tuples
 
-
 @app.route('/event')
 def event():
     event_id = request.args.get("event_id")
     event_owner = request.args.get("event_owner")
     if event_id:
-        cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
-        event = get_first_result(cursor)
+        event_cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
+        event = get_first_result(event_cursor)
+        restaurant_cursor = g.conn.execute                                     \
+                            (RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID, event_id)
+        restaurants = collect_restaurants(get_results(restaurant_cursor))
         event_dict = dict(name=event[1], desc=event[2],                        \
                           datetime=datetime.combine(event[3], event[4])        \
                                             .strftime("%Y-%m-%d %H:%M:%S"),    \
-                          event_id=event_id, event_owner=event_owner)
+                          event_id=event_id, event_owner=event_owner,          \
+                          restaurants=restaurants)
         return render_template("event.html", **event_dict)
     else:
         user_id = request.cookies.get("user_id")

@@ -196,6 +196,26 @@ INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate)
 VALUES (%s, %s, %s, %s, %s);
 '''
 
+RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID =                                         \
+'''
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0) as rate, 
+count(Review_id)
+FROM
+    (
+        (
+            (
+                SELECT *
+                FROM Region
+                WHERE Zip_code = (select zip_code from 
+                ((select * from pjoine where event_id = 1)
+                p1 inner join person using(person_id)) group 
+                by zip_code order by count(*) DESC LIMIT 1)
+            ) AS R INNER JOIN Belong_to USING (Region_id)
+        ) INNER JOIN Restaurant USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
+GROUP BY Restaurant_id
+ORDER BY AVG(rate) DESC NULLS LAST;
+'''
 def get_first_result(cursor):
 	data = None
 	for result in cursor:
