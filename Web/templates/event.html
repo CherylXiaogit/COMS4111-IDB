@@ -1,6 +1,19 @@
 {% extends "layout.html" %}
 {% block body %} 
-
+<script type="text/javascript">
+  // $.ajax({
+  //   type: "POST",
+  //   url: "/get_sketches",
+  //   data: {
+  //     sketch: canvasData
+  //   }
+  // }).done(function(res) {
+  //   console.log(res);
+  //   for (var i = 0; i < res["sketches"].length; i++) {
+  //     $("#video-match-" + i + " > a > img").attr("src", res["sketches"][i]["img_url"]);
+  //   }
+  // });
+</script>
 <article>
 	<h2 class="ui dividing header">
   		{{ name }}
@@ -12,12 +25,56 @@
   	<div class="ui huge teal message">
   		{{ desc }}
   	</div>
-  	<form method="POST" action="join_event">
-  	   <button class="large ui teal submit button">
-        Join This Event!
-        <input style="display: none;" name="event_id" value="{{ event_id }}"></input>
-       </button>
-  	</form>
+    {% if not event_owner %}
+    	<form method="POST" action="join_event">
+    	   <button class="large ui teal submit button">
+          Join This Event!
+          <input style="display: none;" name="event_id" value="{{ event_id }}"></input>
+         </button>
+    	</form>
+    {% else %}
+      <br><br><br>
+      <h2 class="ui teal dividing header">
+        Recommend Some Restaurants
+      </h2>
+      <br><br>
+      <form method="POST" action="find_restaurants">
+        <h2 class="ui teal header">
+          Choose Feature
+        </h2>
+        <div class="ui teal selection dropdown">
+          <input type="hidden" name="feature_id">
+            <i class="dropdown icon"></i>
+            <div class="default text">Udecided</div>
+            <div class="menu">
+                {% for feature_dict in features %}
+                  <div class="item" data-value="{{feature_dict['id']}}">
+                    {{feature_dict["name"]}}
+                  </div>
+                {% endfor %}
+            </div>
+        </div>
+        <h2 class="ui teal header">
+          Choose Region
+        </h2>
+        <div class="ui teal selection dropdown">
+          <input type="hidden" name="zipcode">
+            <i class="dropdown icon"></i>
+            <div class="default text">Udecided</div>
+            <div class="menu">
+                {% for region_dict in regions %}
+                  <div class="item" data-value="{{region_dict['zipcode']}}">
+                    {{region_dict["zipcode"]}}
+                  </div>
+                {% endfor %}
+            </div>
+        </div>
+        <br><br><br>
+        <button class="ui massive teal submit button">
+          Search Restaurants!
+        </button> 
+      </form>
+    {% endif %}
 </article>
 
 {% endblock %}

@@ -266,13 +266,14 @@ def collect_events(event_tuples):
 @app.route('/event')
 def event():
     event_id = request.args.get("event_id")
+    event_owner = request.args.get("event_owner")
     if event_id:
         cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
         event = get_first_result(cursor)
         event_dict = dict(name=event[1], desc=event[2],                        \
                           datetime=datetime.combine(event[3], event[4])        \
                                             .strftime("%Y-%m-%d %H:%M:%S"),    \
-                          event_id=event_id)
+                          event_id=event_id, event_owner=event_owner)
         return render_template("event.html", **event_dict)
     else:
         user_id = request.cookies.get("user_id")
