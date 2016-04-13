@@ -82,6 +82,22 @@ $(document)
             </div>
           </div>
         </div>
+
+        <div class="field">
+		    <div class="ui selection dropdown">
+			    <input type="hidden" name="zipcode">
+				<i class="dropdown icon"></i>
+				<div class="default text">Zipcode</div>
+				<div class="menu">
+					{% for region_dict in regions %}
+				  		<div class="item" data-value="{{region_dict['zipcode']}}">
+                            {{region_dict['zipcode']}}
+				  		</div>
+				  	{% endfor %}
+				</div>
+		    </div>
+		</div>
+
         <div class="ui fluid large teal submit button">Sign Up</div>
       </div>
       <div class="ui error message"></div>

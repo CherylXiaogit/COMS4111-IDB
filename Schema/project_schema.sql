@@ -24,6 +24,8 @@ CREATE TABLE Person
     CONSTRAINT valid_gender CHECK (Gender = 'male' OR Gender = 'female')
 );
 
+ALTER TABLE Person ADD COLUMN Zip_code CHAR(20) NOT NULL DEFAULT '15205'
+
 /* Good */
 /*
 INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Sean Malto', 'sm@columbia.edu', 'male', 24);
@@ -185,6 +187,7 @@ CREATE TABLE Recommend
     Recommend_id SERIAL,
     Feature_id INTEGER NOT NULL,
     Restaurant_id INTEGER NOT NULL,
+    UNIQUE (Feature_id, Restaurant_id),
     PRIMARY KEY(Recommend_id),
     FOREIGN KEY (Restaurant_id) REFERENCES Restaurant ON DELETE CASCADE,
     FOREIGN KEY (Feature_id) REFERENCES Feature ON DELETE CASCADE
@@ -196,6 +199,7 @@ CREATE TABLE Special_for
     Special_id SERIAL,
     Feature_id INTEGER NOT NULL,
     Restaurant_id INTEGER NOT NULL,
+    UNIQUE (Feature_id, Restaurant_id),
     PRIMARY KEY(Special_id),
     FOREIGN KEY (Restaurant_id) REFERENCES Restaurant ON DELETE CASCADE,
     FOREIGN KEY (Feature_id) REFERENCES Feature ON DELETE CASCADE

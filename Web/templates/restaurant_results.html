@@ -22,6 +22,7 @@
       <th>Address</th>
       <th>Location</th>
       <th>Rating</th>
+      <th>Reviews</th>
       </tr>
     </thead>
     <tbody>
@@ -44,6 +45,9 @@
           <p>{{ restaurant_dict["rate"] }}</p>
           <div class="ui large star rating" data-rating="{{restaurant_dict['star']}}" data-max-rating="5">
           </div> 
+        </td>
+        <td class="single line">
+            {{ restaurant_dict["rcount"] }}
         </td>
       </tr>
       {% endfor %}

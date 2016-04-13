@@ -218,6 +218,9 @@ INSERT INTO Own (Event_id, Person_id) VALUES (1, 1);
 /* Add Person to join event */
 INSERT INTO PJoinE (Event_id, Person_id) VALUES (1, 1);
 
+/* Remove Person to join event */
+DELETE FROM PJoinE WHERE Event_id = 1 AND Person_id = 1;
+
 /* Find Event by admin's Person_id, show the events admined by the user */
 SELECT Event_id, Name, Description, EDate, ETime, COUNT(PJoinE.Person_id)
 FROM 
@@ -270,3 +273,43 @@ WHERE Event_id NOT IN (
     WHERE Person_id = 2
     ) 
 );
+
+/* Find Restaurant with feature_id and event_id (Recommendation), ordered by rating */
+
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
+FROM
+    (
+        (
+            SELECT *
+            FROM Special_for
+            WHERE Feature_id = 3
+        ) AS F
+        INNER JOIN
+        (
+            (
+                (
+                    SELECT *
+                    FROM Region
+                    WHERE Zip_code = (select zip_code from ((select * from pjoine where event_id = 1) p1 inner join    person using(person_id)) group  by zip_code order by count(*) DESC LIMIT 1)
+                ) AS R INNER JOIN Belong_to USING (Region_id)
+            ) INNER JOIN Restaurant USING (Restaurant_id)
+        ) USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
+GROUP BY Restaurant_id
+ORDER BY AVG(rate) DESC NULLS LAST;
+
+/* Find Restaurant with event_id (Recommendation), ordered by rating */
+
+SELECT Restaurant_id, Name, Addr, Url, Location, coalesce(AVG(rate), 0), count(Review_id)
+FROM
+    (
+        (
+            (
+                SELECT *
+                FROM Region
+                WHERE Zip_code = (select zip_code from ((select * from pjoine where event_id = 1) p1 inner join person using(person_id)) group  by zip_code order by count(*) DESC LIMIT 1)
+            ) AS R INNER JOIN Belong_to USING (Region_id)
+        ) INNER JOIN Restaurant USING (Restaurant_id)
+    ) LEFT OUTER JOIN Review USING (Restaurant_id)
+GROUP BY Restaurant_id
+ORDER BY AVG(rate) DESC NULLS LAST;
