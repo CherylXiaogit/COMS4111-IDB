@@ -192,40 +192,47 @@ def collect_reviews(review_tuples):
 
 @app.route('/restaurant')
 def restaurant():
-    restaurant_id = request.args.get('restaurant_id')
-    if restaurant_id:
-        cursor = g.conn.execute(FIND_RESTAURANT_WITH_REVIEW_BY_ID,             \
-                                                        restaurant_id)
-        results = get_results(cursor)
-        reviews = collect_reviews(results)
+    try:
+        restaurant_id = request.args.get('restaurant_id')
+        if restaurant_id:
+            cursor = g.conn.execute(FIND_RESTAURANT_WITH_REVIEW_BY_ID,             \
+                                                            restaurant_id)
+            results = get_results(cursor)
+            reviews = collect_reviews(results)
 
-        rest_cursor = g.conn.execute(FIND_RESTAURANT_BY_RESTAURANT_ID,         \
-                                        restaurant_id)
-        rest_results = get_results(rest_cursor)
-        rest = collect_restaurants(rest_results)
-        return render_template("restaurant_review.html", reviews=reviews,      \
-                                                            restaurants=rest)
-    else:
-        feature_cursor = g.conn.execute(FIND_ALL_FEATURES_SQL)
-        region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SQL)
-        feature_tuples = get_results(feature_cursor)
-        region_tuples = get_results(region_cursor)
-        features = collect_features(feature_tuples)
-        regions = collect_regions(region_tuples)
-        return render_template("restaurant.html", features=features,           \
-                                                    regions=regions)
+            rest_cursor = g.conn.execute(FIND_RESTAURANT_BY_RESTAURANT_ID,         \
+                                            restaurant_id)
+            rest_results = get_results(rest_cursor)
+            rest = collect_restaurants(rest_results)
+            return render_template("restaurant_review.html", reviews=reviews,      \
+                                                                restaurants=rest)
+        else:
+            feature_cursor = g.conn.execute(FIND_ALL_FEATURES_SQL)
+            region_cursor = g.conn.execute(FIND_ALL_REGION_ID_ZIPCODE_SQL)
+            feature_tuples = get_results(feature_cursor)
+            region_tuples = get_results(region_cursor)
+            features = collect_features(feature_tuples)
+            regions = collect_regions(region_tuples)
+            return render_template("restaurant.html", features=features,           \
+                                                        regions=regions)
+    except:
+        return redirect("/")
+
 @app.route('/add_review', methods=["POST"])
 def add_review():
-    rate = request.form["rate"]
-    comment = request.form["comment"]
-    restaurant_id = request.form["restaurant_id"]
-    user_id = request.cookies.get("user_id")
-    date = datetime.now().strftime("%Y-%m-%d")
-    if not user_id:
-        return redirect('/')
-    if rate and comment:
-        g.conn.execute(ADD_REVIEW_SQL, (restaurant_id, user_id, comment, date, rate))
-    return redirect(url_for("restaurant", restaurant_id=restaurant_id))
+    try:
+        rate = request.form["rate"]
+        comment = request.form["comment"]
+        restaurant_id = request.form["restaurant_id"]
+        user_id = request.cookies.get("user_id")
+        date = datetime.now().strftime("%Y-%m-%d")
+        if not user_id:
+            return redirect('/')
+        if rate and comment:
+            g.conn.execute(ADD_REVIEW_SQL, (restaurant_id, user_id, comment, date, rate))
+        return redirect(url_for("restaurant", restaurant_id=restaurant_id))
+    except:
+        return redirect("/")
 
 def collect_restaurants(restaurant_tuples):
     return [{'id': restaurant[0], 'name': restaurant[1],                       \
@@ -236,20 +243,23 @@ def collect_restaurants(restaurant_tuples):
 
 @app.route('/find_restaurants', methods=["POST"])
 def find_restaurants():
-    zipcode = request.form["zipcode"]
-    feature_id = request.form["feature_id"]
-    if not (zipcode or feature_id):
-        return redirect("/restaurant")
-    else:
-        if zipcode and feature_id:
-            cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE, (feature_id, zipcode))
-        elif feature_id:
-            cursor = g.conn.execute(FIND_RESTAURANT_BY_FEATURE, feature_id)
+    try:
+        zipcode = request.form["zipcode"]
+        feature_id = request.form["feature_id"]
+        if not (zipcode or feature_id):
+            return redirect("/restaurant")
         else:
-            cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE, zipcode)
-        results = get_results(cursor)
-        restaurants = collect_restaurants(results)
-        return render_template("restaurant_results.html", restaurants=restaurants)
+            if zipcode and feature_id:
+                cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE_AND_FEATURE, (feature_id, zipcode))
+            elif feature_id:
+                cursor = g.conn.execute(FIND_RESTAURANT_BY_FEATURE, feature_id)
+            else:
+                cursor = g.conn.execute(FIND_RESTAURANT_BY_ZIPCODE, zipcode)
+            results = get_results(cursor)
+            restaurants = collect_restaurants(results)
+            return render_template("restaurant_results.html", restaurants=restaurants)
+    except:
+        return redirect("/")
 
 '''
 Event Part:
@@ -281,29 +291,32 @@ def collect_events(event_tuples):
 
 @app.route('/event')
 def event():
-    event_id = request.args.get("event_id")
-    event_owner = request.args.get("event_owner")
-    if event_id:
-        event_cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
-        event = get_first_result(event_cursor)
-        restaurant_cursor = g.conn.execute                                     \
-                            (RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID, event_id)
-        restaurants = collect_restaurants(get_results(restaurant_cursor))
-        event_dict = dict(name=event[1], desc=event[2],                        \
-                          datetime=datetime.combine(event[3], event[4])        \
-                                            .strftime("%Y-%m-%d %H:%M:%S"),    \
-                          event_id=event_id, event_owner=event_owner,          \
-                          restaurants=restaurants)
-        return render_template("event.html", **event_dict)
-    else:
-        user_id = request.cookies.get("user_id")
-        own_cursor = g.conn.execute(FIND_USER_OWN_EVENTS_SQL, user_id)
-        join_cursor = g.conn.execute(FIND_USER_JOIN_EVENTS_SQL, user_id)
-        own_events = get_results(own_cursor)
-        join_events = get_results(join_cursor)
-        data = dict(own_events=collect_events(own_events),                     \
-                    join_events=collect_events(join_events))
-        return render_template("user_events.html", **data)
+    try:
+        event_id = request.args.get("event_id")
+        event_owner = request.args.get("event_owner")
+        if event_id:
+            event_cursor = g.conn.execute(FIND_EVENT_WITH_ID_SQL, event_id)
+            event = get_first_result(event_cursor)
+            restaurant_cursor = g.conn.execute                                     \
+                                (RECOMMEND_RESTAURANT_FOR_EVENT_BY_ID, event_id)
+            restaurants = collect_restaurants(get_results(restaurant_cursor))
+            event_dict = dict(name=event[1], desc=event[2],                        \
+                              datetime=datetime.combine(event[3], event[4])        \
+                                                .strftime("%Y-%m-%d %H:%M:%S"),    \
+                              event_id=event_id, event_owner=event_owner,          \
+                              restaurants=restaurants)
+            return render_template("event.html", **event_dict)
+        else:
+            user_id = request.cookies.get("user_id")
+            own_cursor = g.conn.execute(FIND_USER_OWN_EVENTS_SQL, user_id)
+            join_cursor = g.conn.execute(FIND_USER_JOIN_EVENTS_SQL, user_id)
+            own_events = get_results(own_cursor)
+            join_events = get_results(join_cursor)
+            data = dict(own_events=collect_events(own_events),                     \
+                        join_events=collect_events(join_events))
+            return render_template("user_events.html", **data)
+    except:
+        return redirect("/")
 
 @app.route('/create_event', methods=["GET", "POST"])
 def create_event():
