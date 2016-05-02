@@ -40,6 +40,15 @@ INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Daisy Zhang', 'dz@columbi
 INSERT INTO Person (Name, Email, Gender, Age) VALUES ('Daisy Zhang', 'dz@columbia.edu', 'abc', 22);
 */
 
+CREATE TYPE qualify_type AS (
+    is_age_on       BOOLEAN,
+    is_gender_on    BOOLEAN,
+    age_geq         INTEGER,
+    gender          CHAR(10)
+);
+
+/*ALTER TABLE Event ADD COLUMN qualify qualify_type DEFAULT (false, false, 0, 'male');*/
+
 CREATE TABLE Event 
 (
     Event_id SERIAL,
@@ -47,7 +56,8 @@ CREATE TABLE Event
     Description text,
     EDate DATE NOT NULL,
     ETime Time NOT NULL,
-    PRIMARY KEY(Event_id)
+    PRIMARY KEY(Event_id),
+    qualify qualify_type DEFAULT (false, false, 0, 'male')
 );
 
 /*
@@ -72,6 +82,7 @@ CREATE TABLE Feature
 (
     Feature_id SERIAL,
     Name CHAR(20) NOT NULL,
+    Description TEXT,
     PRIMARY KEY(Feature_id)
 );
 
