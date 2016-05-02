@@ -2,9 +2,10 @@
 
 ### Chia-Hao Hsu (ch3141), Hsiang-Ho Lin (hl2907)
 
-####1. PostgreSQL database account number: hl2907
+#### 1. PostgreSQL database account number: hl2907
 
-####2. Three Interesting SQL queries:
+#### 2. Three Interesting SQL queries:
+
    We imported the real data from Yelp dataset into our database, which contains around 60000+ restaurant, review, and user data. 
    We modified three tables for fitting the requirement for project 2:
 
@@ -14,7 +15,7 @@
 
    The following are our interesting queries:
   
-  - Find out which review is liked by most of people and print out the review id, restaurant id, person id, comment, review comment, how much like number the review gets, and also the rate for the rate.
+  - Find out which review is liked by biggest number of people and print out the review id, restaurant id, person id, review comment, how much like number the review gets, and also the rate for the rate.
    
   ```sql
   select Review_id, Restaurant_id, Person_id, comment, Like_names, top_liked_review.like_cnt, Rate
@@ -28,6 +29,7 @@
   where Review_id = top_liked_review.top_review_id
   ;  
   ```
+  
   The following is the result:
 
          review_id | restaurant_id | person_id | comment |              like_names              | like_cnt | rate
