@@ -106,6 +106,36 @@ CREATE TABLE Review
     CONSTRAINT valid_rate CHECK (Rate > 0 AND Rate < 6)
 );
 
+ALTER TABLE Review ADD COLUMN Like_ids text[] DEFAULT '{"Chris", "Brian"}';
+ALTER TABLE Review Rename COLUMN Like_ids To Like_names;
+
+Update Review SET Like_names = '{"Jenny", "April"}' where Review_id = 75 ;
+Update Review SET Like_names = '{"Jason", "Russel"}' where Review_id = 76 ;
+Update Review SET Like_names = '{"CK", "Waston", "Donald"}' where Review_id = 77 ;
+Update Review SET Like_names = '{"Hillary", "Trump"}' where Review_id = 78 ;
+Update Review SET Like_names = '{"Clinton"}' where Review_id = 79 ;
+Update Review SET Like_names = '{"Michael", "Ryo", "King"}' where Review_id = 80 ;
+Update Review SET Like_names = '{"N", "Suman"}' where Review_id = 81 ;
+Update Review SET Like_names = '{"Jenni", "Heather", "Kathy"}' where Review_id = 82 ;
+Update Review SET Like_names = '{"Anthony", "C"}' where Review_id = 83 ;
+Update Review SET Like_names = '{"Angela", "R"}' where Review_id = 84 ;
+Update Review SET Like_names = '{"Stacey", "Tiffany", "Jessica"}' where Review_id = 85 ;
+Update Review SET Like_names = '{"Dan", "Matt"}' where Review_id = 86 ;
+Update Review SET Like_names = '{"Jenny", "April", "Chris Hsu"}' where Review_id = 87 ;
+Update Review SET Like_names = '{"Jenny", "April", "Chris Hsu", "Brian", "Alex"}' where Review_id = 88;
+
+select Review_id, Restaurant_id, Person_id, comment, Like_names, top_liked_review.like_cnt, Rate
+from review, 
+(select review_stats.Review_id as top_review_id, review_stats.like_cnt
+from (select Review_id,  substring(array_dims(Like_names) from 4 for 1) as like_cnt from review) review_stats
+group by review_stats.Review_id, review_stats.like_cnt
+order by review_stats.like_cnt
+desc
+limit 1) top_liked_review
+where Review_id = top_liked_review.top_review_id
+;
+
+
 /*
 INSERT INTO Review (Restaurant_id, Person_id, Comment, Date, Rate) VALUES (1213123, 1, 'vely gooda', '3/11/2016', 5);
 */
