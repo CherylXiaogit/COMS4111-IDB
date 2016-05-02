@@ -2,15 +2,23 @@
 
 ### Chia-Hao Hsu (ch3141), Hsiang-Ho Lin (hl2907)
 
-####1. PostgreSQL database account number: hl2907
+####2. PostgreSQL database account number: hl2907
 
-####2. Three Interesting SQL queries:
+####3. Explain carefully and thoroughly your rationale behind your modifications to the schema and how these modifications fit within your overall project 
+    Composite types:
+
+    Arrays:
+
+    Documents:
+
+
+####4. Three Interesting SQL queries:
    We imported the real data from Yelp dataset into our database, which contains around 60000+ restaurant, review, and user data. 
    We modified three tables for fitting the requirement for project 2:
 
-   1. Feature
+   1. Feature: Add description text attribute to better describe the feature
    2. Review: Add Array type column "Like_names", which means the people's name who like this review
-   3. Event: 
+   3. Event: Add qualification composite type to filter out events for people who are not qualified 
 
    The following are our interesting queries:
   
