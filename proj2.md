@@ -132,11 +132,10 @@
           (5 rows)
 
 
-   - Event Table: Add qualification composite type to filter out events for people who are not qualified 
+  - Event Table: Add qualification composite type to filter out events for people who are not qualified 
    
-    We allow the administrator to set proper qualification of participants. So when a user is searching for event that the user might be interested (neither joined nor managed), we have to filter out events that the user does not qualify. The following query finds the events which persion_id 2 qualifies but neither joined nor managed.
+  We allow the administrator to set proper qualification of participants. So when a user is searching for event that the user might be interested (neither joined nor managed), we have to filter out events that the user does not qualify. The following query finds the events which persion_id 2 qualifies but neither joined nor managed.
 
-   - 
    ```sql
     SELECT Event_id, name
     FROM Event AS e
@@ -179,24 +178,24 @@
                 7 | TechCrunch Disrupt  
                 8 | NYC Comic Con 2016  
                 9 | FB site visit       
-                10 | Hot Dog Throwdown   
-                11 | 2016 CU Grad Fair!  
-                13 | 2016 CU Grad Fair!  
-                16 | Xmas                
-                17 | cool                
-                31 | facebook employee ne
-                32 | Google Foodie       
-                18 | Chris's BDay Party  
-                20 | Chill               
-                21 | My BDay Party       
-                23 | cool                
-                27 | NYE                 
-                29 | Facebook Employee   
-                25 | English Meetup      
-                26 | Metal lover         
-                30 | NYE at NYC          
-                14 | Pretty sweet
-                15 | No more nightmare
-                33 | My bday
+               10 | Hot Dog Throwdown   
+               11 | 2016 CU Grad Fair!  
+               13 | 2016 CU Grad Fair!  
+               16 | Xmas                
+               17 | cool                
+               31 | facebook employee ne
+               32 | Google Foodie       
+               18 | Chris's BDay Party  
+               20 | Chill               
+               21 | My BDay Party       
+               23 | cool                
+               27 | NYE                 
+               29 | Facebook Employee   
+               25 | English Meetup      
+               26 | Metal lover         
+               30 | NYE at NYC          
+               14 | Pretty sweet
+               15 | No more nightmare
+               33 | My bday
         (27 rows)
 
