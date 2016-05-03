@@ -4,17 +4,13 @@
 
 #### 1. PostgreSQL database account number: hl2907
 
-#### 2. PostgreSQL database account number: hl2907
-
-#### 3. Explain carefully and thoroughly your rationale behind your modifications to the schema and how these modifications fit within your overall project 
-    Composite types:
-
-    Arrays: For the array type, we add "like_names" to the review table since we want to know better about the user behavior. We want to know what kind of review the user will like most and what kind of review will not be attractive to user. Based on the analysis, we can provide better review comment guideline for user to make user write better review and attract more users for our application.
-
-    Documents: For the document type, we add description column for feature table. Since sometimes the simple feature cannot make user to understand the meaning of the feature. Therefore, we add some deatial description for feature to make user have more sense about the meaning of feature.
+#### 2. Explain carefully and thoroughly your rationale behind your modifications to the schema and how these modifications fit within your overall project 
+    - Composite types:
+    - Arrays: For the array type, we add "like_names" to the review table since we want to know better about the user behavior. We want to know what kind of review the user will like most and what kind of review will not be attractive to user. Based on the analysis, we can provide better review comment guideline for user to make user write better review and attract more users for our application.
+    - Documents: For the document type, we add description column for feature table. Since sometimes the simple feature cannot make user to understand the meaning of the feature. Therefore, we add some deatial description for feature to make user have more sense about the meaning of feature.
 
 
-#### 4. Three Interesting SQL queries:
+#### 3. Three Interesting SQL queries:
    We imported the real data from Yelp dataset into our database, which contains around 60000+ restaurant, review, and user data. 
    We modified three tables for fitting the requirement for project 2:
 
@@ -72,14 +68,15 @@
 
 
   The following is the result:
-       restaurant_id |           name           |                       addr
-      ---------------+--------------------------+--------------------------------------------------
-               19849 | Jersey Mikes Subs        | 1743 E Camelback Suite A-02 Phoenix, AZ 85016
-               15121 | Genghis Grill            | 4722 E Cactus Rd Phoenix, AZ 85032
-                5300 | Pittsburgh Steak Company | 1924 E Carson St South Side Pittsburgh, PA 15203
-               14559 | Taco Bell                | 199 North Pecos Henderson, NV 89014
-                3956 | Pacifics Cafe            | 7272 E Indian School Rd Scottsdale, AZ 85251
-      (5 rows)
+
+           restaurant_id |           name           |                       addr
+          ---------------+--------------------------+--------------------------------------------------
+                   19849 | Jersey Mikes Subs        | 1743 E Camelback Suite A-02 Phoenix, AZ 85016
+                   15121 | Genghis Grill            | 4722 E Cactus Rd Phoenix, AZ 85032
+                    5300 | Pittsburgh Steak Company | 1924 E Carson St South Side Pittsburgh, PA 15203
+                   14559 | Taco Bell                | 199 North Pecos Henderson, NV 89014
+                    3956 | Pacifics Cafe            | 7272 E Indian School Rd Scottsdale, AZ 85251
+          (5 rows)
 
 
 
