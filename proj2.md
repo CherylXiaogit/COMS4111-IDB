@@ -5,9 +5,9 @@
 #### 1. PostgreSQL database account number: hl2907
 
 #### 2. Explain carefully and thoroughly your rationale behind your modifications to the schema and how these modifications fit within your overall project 
-    - Composite types:
-    - Arrays: For the array type, we add "like_names" to the review table since we want to know better about the user behavior. We want to know what kind of review the user will like most and what kind of review will not be attractive to user. Based on the analysis, we can provide better review comment guideline for user to make user write better review and attract more users for our application.
-    - Documents: For the document type, we add description column for feature table. Since sometimes the simple feature cannot make user to understand the meaning of the feature. Therefore, we add some deatial description for feature to make user have more sense about the meaning of feature.
+- Composite types:
+- Arrays: For the array type, we add "like_names" to the review table since we want to know better about the user behavior. We want to know what kind of review the user will like most and what kind of review will not be attractive to user. Based on the analysis, we can provide better review comment guideline for user to make user write better review and attract more users for our application.
+- Documents: For the document type, we add description column for feature table. Since sometimes the simple feature cannot make user to understand the meaning of the feature. Therefore, we add some deatial description for feature to make user have more sense about the meaning of feature.
 
 
 #### 3. Three Interesting SQL queries:
