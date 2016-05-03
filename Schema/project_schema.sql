@@ -86,6 +86,18 @@ CREATE TABLE Feature
     PRIMARY KEY(Feature_id)
 );
 
+select Restaurant.restaurant_id, Restaurant.name, Restaurant.addr
+from Restaurant, Special_for, 
+(SELECT Feature_id as f_id, ts_rank(to_tsvector(Description), query) AS rank
+FROM Feature, to_tsquery('best & restaurant | cheap') query
+ORDER BY rank 
+DESC
+LIMIT 5) best_or_cheap_restaurant
+where Restaurant.Restaurant_id = Special_for.Restaurant_id and Special_for.Feature_id = best_or_cheap_restaurant.f_id
+limit 5
+;
+
+
 /*
 INSERT INTO Feature (Name) VALUES ('cheap');
 INSERT INTO Feature (Name) VALUES ('wine');
@@ -109,18 +121,18 @@ CREATE TABLE Review
 ALTER TABLE Review ADD COLUMN Like_ids text[] DEFAULT '{"Chris", "Brian"}';
 ALTER TABLE Review Rename COLUMN Like_ids To Like_names;
 
-Update Review SET Like_names = '{"Jenny", "April"}' where Review_id = 75 ;
-Update Review SET Like_names = '{"Jason", "Russel"}' where Review_id = 76 ;
+Update Review SET Like_names = '{"Jenny", "April", "Eason"}' where Review_id = 75 ;
+Update Review SET Like_names = '{"Jason", "Russel", "April"}' where Review_id = 76 ;
 Update Review SET Like_names = '{"CK", "Waston", "Donald"}' where Review_id = 77 ;
-Update Review SET Like_names = '{"Hillary", "Trump"}' where Review_id = 78 ;
-Update Review SET Like_names = '{"Clinton"}' where Review_id = 79 ;
+Update Review SET Like_names = '{"Hillary", "Trump", "Maggie"}' where Review_id = 78 ;
+Update Review SET Like_names = '{"Clinton", "Yoyo", Roger}' where Review_id = 79 ;
 Update Review SET Like_names = '{"Michael", "Ryo", "King"}' where Review_id = 80 ;
-Update Review SET Like_names = '{"N", "Suman"}' where Review_id = 81 ;
+Update Review SET Like_names = '{"N", "Suman", "Coco"}' where Review_id = 81 ;
 Update Review SET Like_names = '{"Jenni", "Heather", "Kathy"}' where Review_id = 82 ;
-Update Review SET Like_names = '{"Anthony", "C"}' where Review_id = 83 ;
-Update Review SET Like_names = '{"Angela", "R"}' where Review_id = 84 ;
+Update Review SET Like_names = '{"Anthony", "C", "Mary"}' where Review_id = 83 ;
+Update Review SET Like_names = '{"Angela", "R", "TC"}' where Review_id = 84 ;
 Update Review SET Like_names = '{"Stacey", "Tiffany", "Jessica"}' where Review_id = 85 ;
-Update Review SET Like_names = '{"Dan", "Matt"}' where Review_id = 86 ;
+Update Review SET Like_names = '{"Dan", "Matt", "Chris"}' where Review_id = 86 ;
 Update Review SET Like_names = '{"Jenny", "April", "Chris Hsu"}' where Review_id = 87 ;
 Update Review SET Like_names = '{"Jenny", "April", "Chris Hsu", "Brian", "Alex"}' where Review_id = 88;
 
@@ -131,7 +143,7 @@ from (select Review_id,  substring(array_dims(Like_names) from 4 for 1) as like_
 group by review_stats.Review_id, review_stats.like_cnt
 order by review_stats.like_cnt
 desc
-limit 1) top_liked_review
+limit 10) top_liked_review
 where Review_id = top_liked_review.top_review_id
 ;
 
